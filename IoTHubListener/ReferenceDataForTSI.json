@@ -1,0 +1,9 @@
+[{
+    "DeviceId":"mydevice",
+    "MessageId": 1,
+    "EdgeCreatedTimeTicks": 10,
+    "IoTHubEnqueuedTimeTicks": 10,
+    "AzFncInitializedTimeTicks": 10,
+    "EdgeToHubLatencyMs": 10,
+    "EdgeToAzFncLatencyMs": 10
+}]

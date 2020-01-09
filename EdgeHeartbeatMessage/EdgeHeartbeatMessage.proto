@@ -1,0 +1,9 @@
+syntax = "proto3";
+package EdgeHeartbeartMessage;
+
+message Heartbeat {
+    string MsgType = 1;
+    string Name = 2;
+    int64 Id = 3;
+    int64 HeartbeatCreatedTicksUtc = 4;
+}

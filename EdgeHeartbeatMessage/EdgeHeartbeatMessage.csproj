@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.6.1" />
+    <PackageReference Include="Grpc" Version="1.17.1" />
+    <PackageReference Include="Grpc.Tools" Version="1.17.1" PrivateAssets="All" />
+    <!-- https://github.com/grpc/grpc/blob/master/src/csharp/BUILD-INTEGRATION.md -->
+    <Protobuf Include="**/*.proto" OutputDir="%(RelativePath)" CompileOutputs="false" GrpcServices="None" />
+    <!-- <Protobuf Include="**/*.proto" GrpcServices="None" /> -->
+  </ItemGroup>
+</Project>

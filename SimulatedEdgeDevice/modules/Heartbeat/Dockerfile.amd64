@@ -1,0 +1,29 @@
+# Multi-stage Docker build files, 
+# First stage creats a Docker image to compile the code
+# Second stage takes only what is necessary to run the code
+# resulting in a much smaller production image (removes build artifacts) 
+
+#First stage - Build/Compile
+FROM microsoft/dotnet:2.1-sdk AS build-env
+
+# Copy csproj files and restore dependencies 
+WORKDIR /app/SimulatedEdgeDevice/modules/Heartbeat
+COPY EdgeHeartbeatMessage/EdgeHeartbeatMessage.csproj /app/EdgeHeartbeatMessage/
+COPY SimulatedEdgeDevice/modules/Heartbeat/Heartbeat.csproj ./
+RUN dotnet restore
+
+# Copy and build source files
+COPY EdgeHeartbeatMessage/* /app/EdgeHeartbeatMessage/
+COPY SimulatedEdgeDevice/modules/Heartbeat/* ./
+RUN dotnet publish -c Release -o /app/out
+
+# Second stage - Production Image
+# Copy binaries to new image
+FROM microsoft/dotnet:2.1-runtime-stretch-slim
+WORKDIR /app
+COPY --from=build-env /app/out ./
+
+RUN useradd -ms /bin/bash moduleuser
+USER moduleuser
+
+ENTRYPOINT ["dotnet", "Heartbeat.dll"]

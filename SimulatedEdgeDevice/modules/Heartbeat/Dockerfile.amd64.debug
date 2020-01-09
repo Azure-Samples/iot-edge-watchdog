@@ -1,0 +1,41 @@
+# Multi-stage Docker build files, 
+# First stage creats a base Docker image with permissions to allow Debug
+# Second stage creats a Docker image to compile the code
+# Third stage takes only what is necessary to run the code
+# resulting in a much smaller image (removes build artifacts) 
+# that allows debugging
+
+# First stage - Base production image with debug permissions
+FROM microsoft/dotnet:2.1-runtime-stretch-slim AS base
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends unzip procps && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN useradd -ms /bin/bash moduleuser
+USER moduleuser
+RUN curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l ~/vsdbg
+
+# Second stage - Build/Compile environment
+
+FROM microsoft/dotnet:2.1-sdk AS build-env
+WORKDIR /app
+
+# Copy csproj files and restore dependencies 
+WORKDIR /app/SimulatedEdgeDevice/modules/Heartbeat
+COPY EdgeHeartbeatMessage/EdgeHeartbeatMessage.csproj /app/EdgeHeartbeatMessage/
+COPY SimulatedEdgeDevice/modules/Heartbeat/Heartbeat.csproj ./
+RUN dotnet restore
+
+# Copy and build source files
+COPY EdgeHeartbeatMessage/* /app/EdgeHeartbeatMessage/
+COPY SimulatedEdgeDevice/modules/Heartbeat/* ./
+RUN dotnet publish -c Debug -o /app/out
+
+# Third stage - With debug image as base, use binarys from second stage
+
+FROM base
+WORKDIR /app
+COPY --from=build-env /app/out ./
+
+ENTRYPOINT ["dotnet", "Heartbeat.dll"]

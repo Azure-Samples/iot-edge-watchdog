@@ -1,64 +1,47 @@
----
-page_type: sample
-languages:
-- csharp
-products:
-- dotnet
-description: "Add 150 character max description"
-urlFragment: "update-this-to-unique-url-stub"
----
+# Azure IoT Edge Watchdog
 
-# Official Microsoft Sample
+The **Edge Watchdog** provides a solution for monitoring and responding to network partitions in IoT systems that leverage
+an Azure IoT Edge gateway.  This project has 3 primary components:
+- **Share Heartbeat Message Object**: Shared object model (protobuf) between cloud and edge, to ease serialization across
+applications. This project can be modified to produce a Nuget package that can be consumed as a package reference,
+rather than as a linked/dependent project. 
+- **Edge Device Module**: Deploy this module on an Azure IoT Edge device and it will send messages to the corresponding
+IoT Hub and listen for a ACK.  If the IoT Hub fails to respond in a user-defined window, the module will enter a state
+where it consideres itself disconnected.  The next time the module sends a message and receives a response in time, the
+device will move back into online mode. This functionality can be leveraged to have the edge application(s) dynamicall
+adapt to offline operation. This component includes an example Azure DevOps `build.yaml` file that can be leveraged for
+build and release pipelines. 
+- **IoT Hub Listener**: This is an Event Hub triggered Azure Function, where the source Event Hub corresponds to an
+Event Hub compatible endpoint for an IoT Hub. Deploy this function to Azure and it will pick up the messages from the
+Azure IoT Edge Module as they enter the IoT Hub, log them, process them, and respond (ACK) to the device.  This component
+includes an example Azure DevOps `build.yaml` file that can be leveraged for build and release pipelines.
 
-<!-- 
-Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
+## Quickstart
 
-Guidance on onboarding samples to docs.microsoft.com/samples: https://review.docs.microsoft.com/help/onboard/admin/samples/process/onboarding?branch=master
+To run this project, you will need the following Azure resources:
+- [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/)
+- [Azure Event Hubs](https://azure.microsoft.com/en-us/services/event-hubs/)
+- [Azure IoT Edge](https://azure.microsoft.com/en-us/services/iot-edge/)
+- [Azure Container Registry](https://azure.microsoft.com/en-us/services/container-registry/) or other container registry
+- [Azure Time Series Insights](https://azure.microsoft.com/en-us/services/time-series-insights/)
 
-Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
--->
+### Azure IoT Edge Module (Simulated Edge Device)
 
-Give a short description for your sample here. What does it do and why is it important?
+This module has configurable variables set in the Dockerfile. Overwrite these values in the Dockerfile, if desired:
+- DEVICE_NAME: name of this device; this should be unique within the IoT Hub.
+- START_WINDOW_IN_SECONDS: if the device sends a message to IoT Hub and receives a message before START_WINDOW_IN_SECONDS
+seconds, it will consider itself in error.  Set this field to "0" to ignore.
+- END_WINDOW_IN_SECONDS: if the device sends a message to IoT Hub and does not receive a response within
+END_WINDOW_IN_SECONDS seconds, it will consider itself offline.
+- BEAT_FREQUENCY_IN_SECONDS: the device will send messages every BEAT_FREQUENCY_IN_SECONDS seconds.
 
-## Contents
+### Iot Hub Listener
 
-Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
-
-| File/folder       | Description                                |
-|-------------------|--------------------------------------------|
-| `src`             | Sample source code.                        |
-| `.gitignore`      | Define what to ignore at commit time.      |
-| `CHANGELOG.md`    | List of changes to the sample.             |
-| `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
-| `README.md`       | This README file.                          |
-| `LICENSE`         | The license for the sample.                |
-
-## Prerequisites
-
-Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
-
-## Setup
-
-Explain how to prepare the sample once the user clones or downloads the repository. The section should outline every step necessary to install dependencies and set up any settings (for example, API keys and output folders).
-
-## Running the sample
-
-Outline step-by-step instructions to execute the sample and see its output. Include steps for executing the sample from the IDE, starting specific services in the Azure portal or anything related to the overall launch of the code.
-
-## Key concepts
-
-Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
-
-## Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
-
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+The **IoT Hub Listener** is an Azure Function designed to be intermediate plumbing between an Azure IoT Hub and a
+time-series database, such as Azure Time Series Insights (see
+[this article](https://docs.microsoft.com/en-us/azure/time-series-insights/time-series-insights-how-to-add-an-event-source-eventhub)
+for details). An optional consumer group may be added to the output Event Hub where messages are consumed by a streaming
+analytics service, such as Azure Stream Analytics. The stream analytics service can provide alerts/alarms/notifications
+over a tumbling window, for a specific IoT Hub Device ID, to alert when a device has not sent a ping within a set period.
+These empty tumbling window alerts can then allow the cloud-side solution to generate dashboard alerts, or adjust solution
+behavior, such as preventing device deployments if the network connect appears unstable.  

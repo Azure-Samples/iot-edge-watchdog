@@ -1,0 +1,47 @@
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": [
+        {
+            "name": "HeartbeatModule Remote Debug (.NET Core)",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickRemoteProcess}",
+            "pipeTransport": {
+              "pipeProgram": "docker",
+              "pipeArgs": [
+                "exec",
+                "-i",
+                "Heartbeat",
+                "sh",
+                "-c"
+              ],
+              "debuggerPath": "~/vsdbg/vsdbg",
+              "pipeCwd": "${workspaceFolder}",
+              "quoteArgs": true
+            },
+            "sourceFileMap": {
+              "/app": "${workspaceFolder}/../"
+            },
+            "justMyCode": true
+          },
+          {
+            "name": "HeartbeatModule Local Debug (.NET Core)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceRoot}/modules/Heartbeat/bin/Debug/netcoreapp2.1/Heartbeat.dll",
+            "args": [],
+            "cwd": "${workspaceRoot}/modules/Heartbeat",
+            "internalConsoleOptions": "openOnSessionStart",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "env": {
+              "EdgeHubConnectionString": "${config:azure-iot-edge.EdgeHubConnectionString}",
+              "EdgeModuleCACertificateFile": "${config:azure-iot-edge.EdgeModuleCACertificateFile}",
+              "Folder": "${workspaceRoot}\\..\\EdgeHeartbeatMessages"
+            }
+          }
+    ]
+}
