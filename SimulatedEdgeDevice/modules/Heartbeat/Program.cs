@@ -27,7 +27,8 @@ namespace Heartbeat
 
         // The follow variables can be updated with the moduleTwin and are updated through the OnDesiredPropertiesUpdate method
         static uint backoffExp = 1; // used for exponential backoff
-        static string clientName = Environment.GetEnvironmentVariable("DEVICE_NAME");
+        static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
+        static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
         static TimeSpan startWindow = TimeSpan.FromSeconds(Double.Parse(Environment.GetEnvironmentVariable("START_WINDOW_IN_SECONDS")));        
         static TimeSpan endWindow = TimeSpan.FromSeconds(Double.Parse(Environment.GetEnvironmentVariable("END_WINDOW_IN_SECONDS")));  
         static TimeSpan beatFrequency = TimeSpan.FromSeconds(Double.Parse(Environment.GetEnvironmentVariable("BEAT_FREQUENCY_IN_SECONDS")));
@@ -43,8 +44,8 @@ namespace Heartbeat
 
             //To enable the debug wait code, pass 'true' to Init here Init(true);
             ModuleClient ioTHubModuleClient = await Init();
-            Log.Information("clientName: {ClientName}, Start Window: {StartWindow}, End Window: {EndWindow}, Beat Frequency: {BeatFrequency}"
-                ,clientName,startWindow, endWindow, beatFrequency);
+            Log.Information("DeviceId: {deviceId}, ModuleId: {moduleId}, Start Window: {StartWindow}, End Window: {EndWindow}, Beat Frequency: {BeatFrequency}"
+                ,deviceId, moduleId, startWindow, endWindow, beatFrequency);
 
             var moduleTwin = await ioTHubModuleClient.GetTwinAsync();
             
@@ -72,7 +73,7 @@ namespace Heartbeat
                     DeviceTimeout();
                 }
                 else if(connectivityStatus == DeviceStatus.Offline){
-                    Log.Information("Client Name: {ClientName} is online.", clientName);
+                    Log.Information("Device ID: {deviceId} is online.", deviceId);
                     connectivityStatus = DeviceStatus.Online;
                     endWindow = defaultEndWindow;
                 }
@@ -117,7 +118,7 @@ namespace Heartbeat
             // Open a connection to the Edge runtime
             ModuleClient ioTHubModuleClient = await ModuleClient.CreateFromEnvironmentAsync(settings);
             await ioTHubModuleClient.OpenAsync();
-            Log.Information("IoT Hub Heartbeat module client on {ClientName} initialized", clientName);
+            Log.Information("IoT Hub Heartbeat module client on {deviceId} initialized", deviceId);
            
             // Register callback to be called when a message is received by the module
             await ioTHubModuleClient.SetMethodDefaultHandlerAsync(AckMessage, ioTHubModuleClient);
@@ -127,13 +128,14 @@ namespace Heartbeat
 
         private static async Task SendHeartbeat(ModuleClient moduleClient, Int64 msgId)
         {
-            Log.Information("{ClientName} sending heartbeat {MsgId}", clientName, msgId);
+            Log.Information("{deviceId} sending heartbeat {MsgId}", deviceId, msgId);
             try
             {
                 Heartbeat msg = new Heartbeat
                 {
                     MsgType = "Heartbeat",
-                    Name = clientName,
+                    DeviceId = deviceId,
+                    ModuleId = moduleId,
                     Id = (Int64)msgId,
                     HeartbeatCreatedTicksUtc = DateTime.UtcNow.Ticks
                 };
@@ -154,7 +156,7 @@ namespace Heartbeat
         private static void DeviceTimeout(){
             // Update this function if you want something else to happen when the device detects
             // it is offline.
-            Log.Information("Client Name: {ClientName} timed out and is offline", clientName);
+            Log.Information("Client Name: {deviceId} timed out and is offline", deviceId);
             connectivityStatus = DeviceStatus.Offline;
             backoffExp++;
             endWindow = TimeSpan.FromSeconds(Math.Pow( defaultEndWindow.TotalSeconds, backoffExp));
@@ -180,12 +182,12 @@ namespace Heartbeat
             if (!string.IsNullOrEmpty(messageString))
             {
                 Heartbeat msg = JsonParser.Default.Parse<Heartbeat>(messageString);
-                Log.Information("Heartbeat message {MsgId} on {ClientName} acknowledged.", msg.Id, clientName);
+                Log.Information("Heartbeat message {MsgId} on {deviceId} acknowledged.", msg.Id, deviceId);
                 if(HbStatus.ContainsKey(msg.Id)) HbStatus[msg.Id] = MessageStatus.Acked;
             }
             else
             {
-                Log.Information("Heartbeat acknowledge message failed with no data received on {ClientName}", clientName);
+                Log.Information("Heartbeat acknowledge message failed with no data received on {deviceID}", deviceId);
             }
     
             return Task.FromResult(new MethodResponse(200));

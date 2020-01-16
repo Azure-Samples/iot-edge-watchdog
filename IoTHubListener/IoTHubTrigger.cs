@@ -16,16 +16,18 @@ namespace GWManagementFunctions
     public class EdgeHeartbeatLatencyRecord
     {
         public string DeviceId {get; private set;}
+        public string ModuleId {get; private set;}
         public Int64 MessageId {get; private set;}
         public Int64 EdgeCreatedTimeTicks {get; private set;}
         public Int64 IoTHubEnqueuedTimeTicks {get; private set;}
         public Int64 AzFncInitializedTimeTicks {get; private set;}
         public Int64 EdgeToHubLatencyMs {get; private set;}
         public Int64 EdgeToAzFncLatencyMs {get; private set;}
-        public EdgeHeartbeatLatencyRecord(string DeviceId, Int64 msgId ,Int64 EdgeCreatedTime, Int64 IotHubEnqueueTime
+        public EdgeHeartbeatLatencyRecord(string deviceId, string moduleId, Int64 msgId ,Int64 EdgeCreatedTime, Int64 IotHubEnqueueTime
             , Int64 AzFncInitializedTime)
         {
-            this.DeviceId = DeviceId;
+            this.DeviceId = deviceId;
+            ModuleId = moduleId;
             MessageId = msgId;
             EdgeCreatedTimeTicks = EdgeCreatedTime;
             IoTHubEnqueuedTimeTicks = IotHubEnqueueTime;
@@ -93,7 +95,8 @@ namespace GWManagementFunctions
         {
             var msg = await messageTask;
 
-            string deviceId = msg.Name;
+            string deviceId = msg.DeviceId;
+            string moduleId = msg.ModuleId;
             msg.MsgType = "Ack";
 
             var ackMessage = Google.Protobuf.JsonFormatter.Default.Format(msg);
@@ -103,10 +106,10 @@ namespace GWManagementFunctions
 
                 CloudToDeviceMethod method = new CloudToDeviceMethod("AckMessage");
                 method.SetPayloadJson(ackMessage);
-                logger.LogInformation("Sending C2D response to {0} with ID: {1}", msg.Name, msg.Id);
+                logger.LogInformation("Sending C2D response to {0} with ID: {1}", deviceId, msg.Id);
 
                 // respond to device
-                var directMethodResult = await serviceClient.InvokeDeviceMethodAsync(deviceId, "Heartbeat", method);
+                var directMethodResult = await serviceClient.InvokeDeviceMethodAsync(deviceId, moduleId, method);
                
                 // ToDo: error handling for failed cast required
                 HttpStatusCode code = (HttpStatusCode)directMethodResult.Status;
@@ -136,7 +139,8 @@ namespace GWManagementFunctions
         {
             var msg = await messageTask;
             var  latencyRecord = 
-                new EdgeHeartbeatLatencyRecord(msg.Name,
+                new EdgeHeartbeatLatencyRecord(msg.DeviceId,
+                    msg.ModuleId,
                     msg.Id,
                     msg.HeartbeatCreatedTicksUtc,
                     enqueuedTimeUtc.Ticks,

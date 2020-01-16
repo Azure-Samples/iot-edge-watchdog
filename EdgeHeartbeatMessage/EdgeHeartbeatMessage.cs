@@ -25,13 +25,13 @@ namespace EdgeHeartbeartMessage {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChpFZGdlSGVhcnRiZWF0TWVzc2FnZS5wcm90bxIVRWRnZUhlYXJ0YmVhcnRN",
-            "ZXNzYWdlIlgKCUhlYXJ0YmVhdBIPCgdNc2dUeXBlGAEgASgJEgwKBE5hbWUY",
-            "AiABKAkSCgoCSWQYAyABKAMSIAoYSGVhcnRiZWF0Q3JlYXRlZFRpY2tzVXRj",
-            "GAQgASgDYgZwcm90bzM="));
+            "ZXNzYWdlIm4KCUhlYXJ0YmVhdBIPCgdNc2dUeXBlGAEgASgJEhAKCERldmlj",
+            "ZUlkGAIgASgJEhAKCE1vZHVsZUlkGAMgASgJEgoKAklkGAQgASgDEiAKGEhl",
+            "YXJ0YmVhdENyZWF0ZWRUaWNrc1V0YxgFIAEoA2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::EdgeHeartbeartMessage.Heartbeat), global::EdgeHeartbeartMessage.Heartbeat.Parser, new[]{ "MsgType", "Name", "Id", "HeartbeatCreatedTicksUtc" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::EdgeHeartbeartMessage.Heartbeat), global::EdgeHeartbeartMessage.Heartbeat.Parser, new[]{ "MsgType", "DeviceId", "ModuleId", "Id", "HeartbeatCreatedTicksUtc" }, null, null, null)
           }));
     }
     #endregion
@@ -64,7 +64,8 @@ namespace EdgeHeartbeartMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public Heartbeat(Heartbeat other) : this() {
       msgType_ = other.msgType_;
-      name_ = other.name_;
+      deviceId_ = other.deviceId_;
+      moduleId_ = other.moduleId_;
       id_ = other.id_;
       heartbeatCreatedTicksUtc_ = other.heartbeatCreatedTicksUtc_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -86,19 +87,30 @@ namespace EdgeHeartbeartMessage {
       }
     }
 
-    /// <summary>Field number for the "Name" field.</summary>
-    public const int NameFieldNumber = 2;
-    private string name_ = "";
+    /// <summary>Field number for the "DeviceId" field.</summary>
+    public const int DeviceIdFieldNumber = 2;
+    private string deviceId_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Name {
-      get { return name_; }
+    public string DeviceId {
+      get { return deviceId_; }
       set {
-        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        deviceId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "ModuleId" field.</summary>
+    public const int ModuleIdFieldNumber = 3;
+    private string moduleId_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string ModuleId {
+      get { return moduleId_; }
+      set {
+        moduleId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
     /// <summary>Field number for the "Id" field.</summary>
-    public const int IdFieldNumber = 3;
+    public const int IdFieldNumber = 4;
     private long id_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public long Id {
@@ -109,7 +121,7 @@ namespace EdgeHeartbeartMessage {
     }
 
     /// <summary>Field number for the "HeartbeatCreatedTicksUtc" field.</summary>
-    public const int HeartbeatCreatedTicksUtcFieldNumber = 4;
+    public const int HeartbeatCreatedTicksUtcFieldNumber = 5;
     private long heartbeatCreatedTicksUtc_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public long HeartbeatCreatedTicksUtc {
@@ -133,7 +145,8 @@ namespace EdgeHeartbeartMessage {
         return true;
       }
       if (MsgType != other.MsgType) return false;
-      if (Name != other.Name) return false;
+      if (DeviceId != other.DeviceId) return false;
+      if (ModuleId != other.ModuleId) return false;
       if (Id != other.Id) return false;
       if (HeartbeatCreatedTicksUtc != other.HeartbeatCreatedTicksUtc) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -143,7 +156,8 @@ namespace EdgeHeartbeartMessage {
     public override int GetHashCode() {
       int hash = 1;
       if (MsgType.Length != 0) hash ^= MsgType.GetHashCode();
-      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (DeviceId.Length != 0) hash ^= DeviceId.GetHashCode();
+      if (ModuleId.Length != 0) hash ^= ModuleId.GetHashCode();
       if (Id != 0L) hash ^= Id.GetHashCode();
       if (HeartbeatCreatedTicksUtc != 0L) hash ^= HeartbeatCreatedTicksUtc.GetHashCode();
       if (_unknownFields != null) {
@@ -163,16 +177,20 @@ namespace EdgeHeartbeartMessage {
         output.WriteRawTag(10);
         output.WriteString(MsgType);
       }
-      if (Name.Length != 0) {
+      if (DeviceId.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Name);
+        output.WriteString(DeviceId);
+      }
+      if (ModuleId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(ModuleId);
       }
       if (Id != 0L) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteInt64(Id);
       }
       if (HeartbeatCreatedTicksUtc != 0L) {
-        output.WriteRawTag(32);
+        output.WriteRawTag(40);
         output.WriteInt64(HeartbeatCreatedTicksUtc);
       }
       if (_unknownFields != null) {
@@ -186,8 +204,11 @@ namespace EdgeHeartbeartMessage {
       if (MsgType.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(MsgType);
       }
-      if (Name.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      if (DeviceId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(DeviceId);
+      }
+      if (ModuleId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ModuleId);
       }
       if (Id != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(Id);
@@ -209,8 +230,11 @@ namespace EdgeHeartbeartMessage {
       if (other.MsgType.Length != 0) {
         MsgType = other.MsgType;
       }
-      if (other.Name.Length != 0) {
-        Name = other.Name;
+      if (other.DeviceId.Length != 0) {
+        DeviceId = other.DeviceId;
+      }
+      if (other.ModuleId.Length != 0) {
+        ModuleId = other.ModuleId;
       }
       if (other.Id != 0L) {
         Id = other.Id;
@@ -234,14 +258,18 @@ namespace EdgeHeartbeartMessage {
             break;
           }
           case 18: {
-            Name = input.ReadString();
+            DeviceId = input.ReadString();
             break;
           }
-          case 24: {
-            Id = input.ReadInt64();
+          case 26: {
+            ModuleId = input.ReadString();
             break;
           }
           case 32: {
+            Id = input.ReadInt64();
+            break;
+          }
+          case 40: {
             HeartbeatCreatedTicksUtc = input.ReadInt64();
             break;
           }

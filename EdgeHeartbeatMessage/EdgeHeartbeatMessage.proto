@@ -3,7 +3,8 @@ package EdgeHeartbeartMessage;
 
 message Heartbeat {
     string MsgType = 1;
-    string Name = 2;
-    int64 Id = 3;
-    int64 HeartbeatCreatedTicksUtc = 4;
+    string DeviceId = 2;
+    string ModuleId = 3;
+    int64 Id = 4;
+    int64 HeartbeatCreatedTicksUtc = 5;
 }
