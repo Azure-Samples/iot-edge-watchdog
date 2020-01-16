@@ -40,8 +40,11 @@ END_WINDOW_IN_SECONDS seconds, it will consider itself offline.
 The **IoT Hub Listener** is an Azure Function designed to be intermediate plumbing between an Azure IoT Hub and a
 time-series database, such as Azure Time Series Insights (see
 [this article](https://docs.microsoft.com/en-us/azure/time-series-insights/time-series-insights-how-to-add-an-event-source-eventhub)
-for details). An optional consumer group may be added to the output Event Hub where messages are consumed by a streaming
+for details). The Azure Function requires an input Event Hub, such as IoT Hub's Event Hub compatible end point, and an
+output Event Hub to push data to. The output Event Hub can be mapped to TSI for persistence of watchdog messages. 
+
+An optional consumer group may be added to the output Event Hub where messages are consumed by a streaming
 analytics service, such as Azure Stream Analytics. The stream analytics service can provide alerts/alarms/notifications
 over a tumbling window, for a specific IoT Hub Device ID, to alert when a device has not sent a ping within a set period.
-These empty tumbling window alerts can then allow the cloud-side solution to generate dashboard alerts, or adjust solution
-behavior, such as preventing device deployments if the network connect appears unstable.  
+These empty tumbling window alerts can then allow the cloud-side solution to generate dashboard alerts, or adjust
+solution behavior, such as preventing device deployments if the network connect appears unstable.  
