@@ -34,11 +34,7 @@ namespace HeartbeatModule
         static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
         static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);        
         static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", END_WINDOW_IN_SECONDS);  
-                
-        // Default Heartbeat message frequency is 10 sec
         static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", HEARTBEAT_FREQUENCY_IN_SECONDS);
-
-        
         static TimeSpan defaultEndWindow = endWindow;  
         static LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
 
