@@ -11,22 +11,23 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Devices" Version="1.18.2"/>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="1.8.0"/>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="3.0.3"/>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.26"/>
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.0"/>
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.4.0"/>
+    <PackageReference Include="Microsoft.Azure.Devices" Version="1.18.2" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="4.1.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.31" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Host.Storage" Version="3.0.14" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\HeartbeatMessage\HeartbeatMessage.csproj"/>
+    <ProjectReference Include="..\HeartbeatMessage\HeartbeatMessage.csproj" />
   </ItemGroup>  
   
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.6.1"/>
-    <PackageReference Include="Grpc" Version="1.17.1"/>
-    <PackageReference Include="Grpc.Tools" Version="1.17.1" PrivateAssets="All"/>
+    <PackageReference Include="Google.Protobuf" Version="3.11.2" />
+    <PackageReference Include="Grpc" Version="2.26.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.26.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
