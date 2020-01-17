@@ -4,14 +4,14 @@ using Moq;
 using Microsoft.Azure.Devices;
 using GWManagementFunctions;
 using System.Threading.Tasks;
-using EdgeHeartbeartMessage;
+using HeartbeatProto;
 
 namespace IoTHubListenerTests
 {
     public class AckDeviceMessageTests
     {
-        public Task<Heartbeat> GetEventData(string messageType, string deviceId, string moduleId, Int64 msgId) {
-            Heartbeat obj = new Heartbeat
+        public Task<HeartbeatMessage> GetEventData(string messageType, string deviceId, string moduleId, Int64 msgId) {
+            HeartbeatMessage obj = new HeartbeatMessage
                 {
                     MsgType = messageType,
                     DeviceId = deviceId,

@@ -1,23 +1,22 @@
-namespace Heartbeat
-{
-    using System;
-    using System.Runtime.Loader;
-    using System.Diagnostics;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Collections.Generic;
-    using Microsoft.Azure.Devices.Shared;
-    using Microsoft.Azure.Devices.Client;
-    using Microsoft.Azure.Devices.Client.Transport.Mqtt;
-    using Google.Protobuf;
-    using EdgeHeartbeartMessage;
-    using Newtonsoft.Json.Linq;
-    using Serilog;
-    using Serilog.Core;
-    using Serilog.Events;
+using System;
+using System.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Azure.Devices.Shared;
+using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Client.Transport.Mqtt;
+using Google.Protobuf;
+using HeartbeatProto;
+using Newtonsoft.Json.Linq;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
-    class Program
+namespace HeartbeatModule
+{
+    public class Program
     {
         enum MessageStatus {Sent, Acked};
         enum DeviceStatus {Online, Offline};
@@ -29,9 +28,13 @@ namespace Heartbeat
         static uint backoffExp = 1; // used for exponential backoff
         static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
         static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
-        static TimeSpan startWindow = TimeSpan.FromSeconds(Double.Parse(Environment.GetEnvironmentVariable("START_WINDOW_IN_SECONDS")));        
-        static TimeSpan endWindow = TimeSpan.FromSeconds(Double.Parse(Environment.GetEnvironmentVariable("END_WINDOW_IN_SECONDS")));  
-        static TimeSpan beatFrequency = TimeSpan.FromSeconds(Double.Parse(Environment.GetEnvironmentVariable("BEAT_FREQUENCY_IN_SECONDS")));
+        static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", 1);        
+        static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", 5);  
+                
+        // Default Heartbeat message frequency is 10 sec
+        static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", 10);
+
+        
         static TimeSpan defaultEndWindow = endWindow;  
         static LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
 
@@ -45,7 +48,7 @@ namespace Heartbeat
             //To enable the debug wait code, pass 'true' to Init here Init(true);
             ModuleClient ioTHubModuleClient = await Init();
             Log.Information("DeviceId: {deviceId}, ModuleId: {moduleId}, Start Window: {StartWindow}, End Window: {EndWindow}, Beat Frequency: {BeatFrequency}"
-                ,deviceId, moduleId, startWindow, endWindow, beatFrequency);
+                ,deviceId, moduleId, startWindow, endWindow, hartbeatFrequency);
 
             var moduleTwin = await ioTHubModuleClient.GetTwinAsync();
             
@@ -82,7 +85,7 @@ namespace Heartbeat
                 Interlocked.CompareExchange(ref msgId, 0, System.Int64.MaxValue);
                 Interlocked.Increment(ref msgId);
 
-                if(beatFrequency - endWindow > TimeSpan.Zero) await Task.Delay(beatFrequency - endWindow);           
+                if(hartbeatFrequency - endWindow > TimeSpan.Zero) await Task.Delay(hartbeatFrequency - endWindow);           
             }
         }
 
@@ -94,6 +97,13 @@ namespace Heartbeat
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).SetResult(true), tcs);
             return tcs.Task;
+        }
+
+        public static TimeSpan GetTimeSpanEnvVar(string varName, double defaultValue){
+            var strValue = Environment.GetEnvironmentVariable(varName);
+            var doubleValue = defaultValue; 
+            Double.TryParse(strValue, out doubleValue);
+            return TimeSpan.FromSeconds(doubleValue);
         }
 
         /// <summary>
@@ -131,7 +141,7 @@ namespace Heartbeat
             Log.Information("{deviceId} sending heartbeat {MsgId}", deviceId, msgId);
             try
             {
-                Heartbeat msg = new Heartbeat
+                HeartbeatMessage msg = new HeartbeatMessage
                 {
                     MsgType = "Heartbeat",
                     DeviceId = deviceId,
@@ -181,7 +191,7 @@ namespace Heartbeat
 
             if (!string.IsNullOrEmpty(messageString))
             {
-                Heartbeat msg = JsonParser.Default.Parse<Heartbeat>(messageString);
+                var msg = JsonParser.Default.Parse<HeartbeatMessage>(messageString);
                 Log.Information("Heartbeat message {MsgId} on {deviceId} acknowledged.", msg.Id, deviceId);
                 if(HbStatus.ContainsKey(msg.Id)) HbStatus[msg.Id] = MessageStatus.Acked;
             }
@@ -224,7 +234,7 @@ namespace Heartbeat
                 if (desiredProperties.Contains("beatFrequency") && desiredProperties["beatFrequency"] != null)
                 {
                     var rawBeatFrequency = desiredProperties["beatFrequency"] as JValue;
-                    beatFrequency = TimeSpan.FromSeconds(Convert.ToDouble(rawBeatFrequency.Value));
+                    hartbeatFrequency = TimeSpan.FromSeconds(Convert.ToDouble(rawBeatFrequency.Value));
                 }
                 if(desiredProperties.Contains("logEventLevel") && desiredProperties["logEventLevel"] != null){
                     switch(desiredProperties["logEventLevel"].ToString().ToLower())

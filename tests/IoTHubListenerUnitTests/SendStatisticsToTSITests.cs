@@ -6,7 +6,7 @@ using GWManagementFunctions;
 using Microsoft.Azure.WebJobs;
 using System.Threading.Tasks;
 using System.Threading;
-using EdgeHeartbeartMessage;
+using HeartbeatProto;
 
 namespace IoTHubListenerTests
 {

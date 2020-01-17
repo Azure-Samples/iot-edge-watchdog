@@ -1,7 +1,7 @@
 syntax = "proto3";
-package EdgeHeartbeartMessage;
+package HeartbeatProto;
 
-message Heartbeat {
+message HeartbeatMessage {
     string MsgType = 1;
     string DeviceId = 2;
     string ModuleId = 3;

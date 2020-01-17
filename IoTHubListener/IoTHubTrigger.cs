@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IoTHubTrigger = Microsoft.Azure.WebJobs.EventHubTriggerAttribute;
 using Google.Protobuf;
-using EdgeHeartbeartMessage;
+using HeartbeatProto;
 using Newtonsoft.Json;
 
 namespace GWManagementFunctions
@@ -71,14 +71,14 @@ namespace GWManagementFunctions
                 .SendStatisticsToTSI(tsiEventHub, logger, enqueuedTimeUtc, azFncInitializedTime);
         }
 
-        public static Task<Heartbeat> ParseIoTHubMessage(this EventData message, ILogger log)
+        public static Task<HeartbeatMessage> ParseIoTHubMessage(this EventData message, ILogger log)
         {
             var rawMsg = Encoding.UTF8.GetString(message.Body.Array);
-            Heartbeat msg = new Heartbeat();
+            HeartbeatMessage msg = new HeartbeatMessage();
             
             try
             { 
-                msg = JsonParser.Default.Parse<Heartbeat>(rawMsg); 
+                msg = JsonParser.Default.Parse<HeartbeatMessage>(rawMsg); 
             }
             catch(Exception e)
             {
@@ -88,8 +88,8 @@ namespace GWManagementFunctions
             return Task.FromResult(msg);
         }
 
-        public static async Task<Heartbeat> AckDeviceMessage (
-            this Task<Heartbeat> messageTask, 
+        public static async Task<HeartbeatMessage> AckDeviceMessage (
+            this Task<HeartbeatMessage> messageTask, 
             IIoTHubServiceClient serviceClient,
             ILogger logger)
         {
@@ -131,7 +131,7 @@ namespace GWManagementFunctions
             return msg;
         }
 
-        public static async Task SendStatisticsToTSI(this Task<Heartbeat> messageTask,
+        public static async Task SendStatisticsToTSI(this Task<HeartbeatMessage> messageTask,
                                                  IAsyncCollector<string> tsiEventHub,
                                                  ILogger logger,
                                                  DateTime enqueuedTimeUtc,

@@ -20,7 +20,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\EdgeHeartbeatMessage\EdgeHeartbeatMessage.csproj"/>
+    <ProjectReference Include="..\HeartbeatMessage\HeartbeatMessage.csproj"/>
   </ItemGroup>  
   
   <ItemGroup>
