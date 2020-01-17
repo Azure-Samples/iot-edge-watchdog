@@ -10,11 +10,12 @@ namespace IoTHubListenerTests
 {
     public class AckDeviceMessageTests
     {
-        public Task<Heartbeat> GetEventData(string messageType, string deviceId, Int64 msgId) {
+        public Task<Heartbeat> GetEventData(string messageType, string deviceId, string moduleId, Int64 msgId) {
             Heartbeat obj = new Heartbeat
                 {
                     MsgType = messageType,
-                    Name = deviceId,
+                    DeviceId = deviceId,
+                    ModuleId = moduleId,
                     Id = msgId,
                     HeartbeatCreatedTicksUtc = DateTime.UtcNow.Ticks
                 };
@@ -43,10 +44,11 @@ namespace IoTHubListenerTests
 
             var messageId = (Int64)1000;
             var deviceId = "deviceId";
+            var moduleId = "moduleId";
 
             var directMethodResult = 
                 IoTHubListener.AckDeviceMessage(
-                    GetEventData("Heartbeat", deviceId, messageId),
+                    GetEventData("Heartbeat", deviceId, moduleId, messageId),
                     serviceClientMock.Object,
                     loggerMock.Object);   
 
