@@ -128,7 +128,7 @@ namespace HeartbeatModule
             // Open a connection to the Edge runtime
             ModuleClient ioTHubModuleClient = await ModuleClient.CreateFromEnvironmentAsync(settings);
             await ioTHubModuleClient.OpenAsync();
-            Log.Information("IoT Hub Heartbeat module client on {deviceId} initialized", deviceId);
+            Log.Information("IoT Hub watchdog module {moduleId} on {deviceId} initialized", moduleId, deviceId);
            
             // Register callback to be called when a message is received by the module
             await ioTHubModuleClient.SetMethodDefaultHandlerAsync(AckMessage, ioTHubModuleClient);
@@ -166,7 +166,7 @@ namespace HeartbeatModule
         private static void DeviceTimeout(){
             // Update this function if you want something else to happen when the device detects
             // it is offline.
-            Log.Information("Client Name: {deviceId} timed out and is offline", deviceId);
+            Log.Information("{deviceId} timed out and is offline", deviceId);
             connectivityStatus = DeviceStatus.Offline;
             backoffExp++;
             endWindow = TimeSpan.FromSeconds(Math.Pow( defaultEndWindow.TotalSeconds, backoffExp));
@@ -197,7 +197,8 @@ namespace HeartbeatModule
             }
             else
             {
-                Log.Information("Heartbeat acknowledge message failed with no data received on {deviceID}", deviceId);
+                Log.Information("The method to acknowledge a heartbeat message was called but no data was received on {deviceID}"
+                                , deviceId);
             }
     
             return Task.FromResult(new MethodResponse(200));
