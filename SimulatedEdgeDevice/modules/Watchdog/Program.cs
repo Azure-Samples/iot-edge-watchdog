@@ -18,6 +18,10 @@ namespace HeartbeatModule
 {
     public class Program
     {
+        static int START_WINDOW_IN_SECONDS = 1;
+        static int END_WINDOW_IN_SECONDS = 5;
+        static int HEARTBEAT_FREQUENCY_IN_SECONDS = 10;
+
         enum MessageStatus {Sent, Acked};
         enum DeviceStatus {Online, Offline};
         static int counter;
@@ -28,11 +32,11 @@ namespace HeartbeatModule
         static uint backoffExp = 1; // used for exponential backoff
         static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
         static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
-        static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", 1);        
-        static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", 5);  
+        static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);        
+        static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", END_WINDOW_IN_SECONDS);  
                 
         // Default Heartbeat message frequency is 10 sec
-        static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", 10);
+        static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", HEARTBEAT_FREQUENCY_IN_SECONDS);
 
         
         static TimeSpan defaultEndWindow = endWindow;  
