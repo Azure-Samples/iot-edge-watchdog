@@ -60,6 +60,7 @@ rather than as a linked/dependent project.
 1. Language SDK
 
 - [.NET Core SDK (3.1 or above)](https://www.microsoft.com/net/download)
+- [Node.js (8.5 or above)](https://nodejs.org) - required for local development of the Azure Functions Core Tools.
 
 2. Docker
 
@@ -87,9 +88,35 @@ Install [Visual Studio Code](https://code.visualstudio.com/) first and then add 
 
 - [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
 
+
+5. Azure IoT EdgeHub Dev Tool
+
+ [Azure IoT EdgeHub Dev Tool](https://pypi.org/project/iotedgehubdev/) is a version of the Azure IoT Edge runtime for local development machine.  After verifying Python and Pip (2.7/3.6 or above) are installed and in the path, install **[iotedgehubdev](https://pypi.org/project/iotedgehubdev/)** with Pip:
+
+    ```bash
+    pip install --upgrade iotedgehubdev
+    ```
+
+6. Azure Functions Core Tools
+
+ [Azure Functions Core Tools](https://github.com/Microsoft/vscode-azurefunctions/blob/master/README.md) is a version of the Azure Functions runtime for local development machine. It also provides commands to create functions, connect to Azure, and deploy Azure Function projects.  After verifying Node.js (8.5 or above) is installed and in the path, install **[azure-functions-core-tools](https://www.npmjs.com/package/azure-functions-core-tools)** with
+    npm:
+
+    ```bash
+    npm install -g azure-functions-core-tools
+    ```
+
+7. Azure Storage Emulator (optional, Windows only)
+
+ [AzureStorageEmulator](https://docs.microsoft.com/en-us/azure/storage/commonstorage-use-emulator)  provides a local environment that emulates the AzureBlob, Queue, and Table services for development purposes.  Use the link for thestandalone installer.
+
+ Azure Blob Storage is required for the Azure Functions runtime for internalstate management.  The Azure Function in this sample also writes decompressedmessages to an Azure Storage account. 
+
+ When running this sample locally on **Windows**, the Azure Storage Emulator can be used instead of creating an Azure Storage account.  The emulator will not work with **WSL** or **Linux** and a real storage account will be needed.
+
 ### Azure IoT Edge Module (Simulated Edge Device)
 
-In the provided `env` file (remove the `.tmp` extension) there are many configurable
+In the provided `env` file (remove the `.temp` extension) there are many configurable
 variables.  At a minimum, you will need to fill in the container registry settings.
 If you are using `localhost` are your registry, then you can leave username and
 password blank.
@@ -101,8 +128,6 @@ seconds, it will consider itself in error.  Set this field to "0" to ignore.
 - END_WINDOW_IN_SECONDS (5): if the device sends a message to IoT Hub and does not receive a response within
 END_WINDOW_IN_SECONDS seconds, it will consider itself offline.
 - HEARTBEAT_FREQUENCY_IN_SECONDS (10): the device will send messages every HEARTBEAT_FREQUENCY_IN_SECONDS seconds.
-
-
 
 ### Iot Hub Listener
 
@@ -117,6 +142,24 @@ analytics service, such as Azure Stream Analytics. The stream analytics service 
 over a tumbling window, for a specific IoT Hub Device ID, to alert when a device has not sent a ping within a set period.
 These empty tumbling window alerts can then allow the cloud-side solution to generate dashboard alerts, or adjust
 solution behavior, such as preventing device deployments if the network connect appears unstable.  
+
+
+### Environment settings and use/development
+
+There are four settings to configure for the IoT HuB listener.  These are in the
+`local.settings.json.temp` file.  After changing the settings, remove the `.temp`
+extension.
+
+First set the IoT Hub Connection string, then the IoT Hub Event Hub Endpoint Connection String.  This second string is what triggers the IoT Hub Listener and
+where it pulls the message data from. The Event Hub Endpoint is where the processed data gets sent and which enables Azure Time Series Insight or another service 
+to access the processed message.  Finally, AzureWebJobsStorage is a required backing
+store for Azure Functions.  This can be a local Azure Storage Emulator with the
+setting `UseDevelopmentStorage=true`.
+
+`IoTHubEventHubEndpointConnectionString`
+`IoTHubConnectionString`
+`EventHubEndpointConnectionString`
+`AzureWebJobsStorage`
 
 ### HeartMessage
 
