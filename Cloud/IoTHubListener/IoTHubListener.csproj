@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
   
@@ -21,7 +21,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\HeartbeatMessage\HeartbeatMessage.csproj" />
+    <ProjectReference Include="..\..\SharedCode\HeartbeatMessage\HeartbeatMessage.csproj" />
   </ItemGroup>  
   
   <ItemGroup>
