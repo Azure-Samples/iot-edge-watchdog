@@ -11,7 +11,7 @@ products:
 - azure-event-hubs
 - vs-code
 description:
-Azure IoT Edge watchdog pattern which uses Azure Functions to send
+- Azure IoT Edge watchdog pattern which uses Azure Functions to send
 the watchdog heartbeat response message from the cloud.
 ---
 
@@ -28,6 +28,9 @@ should happen if the Edge device does not receive an acknowledgement.
 
 | File/folder | Description |
 |-|-|
+| `Edge` | Contains Azure IoT Edge Watchdog module which sends Heartbeat message |
+| `Cloud` | Contains the Azure Function code which responds to Heartbeat message |
+| `SharedCode` | Contains Protobuf definition for Heartbeat message |
 | `.gitignore`      | Define what to ignore at commit time. |
 | `CODE_OF_CONDUCT.md` | Microsoft Open Source Code of Conduct and FAQ |
 | `CONTRIBUTING.MD` | Guidelines for contributing to the Sample on Github |
@@ -38,21 +41,31 @@ should happen if the Edge device does not receive an acknowledgement.
 
 The **Edge Watchdog** provides a solution for monitoring and responding to network partitions in IoT systems that leverage
 an Azure IoT Edge gateway.  This project has 3 primary components:
-- **Share Heartbeat Message Object**: Shared object model (protobuf) between cloud and edge, to ease serialization across
-applications. This project can be modified to produce a Nuget package that can be consumed as a package reference,
-rather than as a linked/dependent project. 
-- **Edge Device Module**: Deploy this module on an Azure IoT Edge device and it will send messages to the corresponding
+- **Edge/SimulatedDevice/Module**: Deploy this module on an Azure IoT Edge device and it will send messages to the corresponding
 IoT Hub and listen for a ACK.  If the IoT Hub fails to respond in a user-defined window, the module will enter a state
 where it consideres itself disconnected.  The next time the module sends a message and receives a response in time, the
 device will move back into online mode. This functionality can be leveraged to have the edge application(s) dynamicall
 adapt to offline operation. This component includes an example Azure DevOps `build.yaml` file that can be leveraged for
 build and release pipelines. 
-- **IoT Hub Listener**: This is an Event Hub triggered Azure Function, where the source Event Hub corresponds to an
+- **Cloud/IoTHubListener**: This is an Event Hub triggered Azure Function, where the source Event Hub corresponds to an
 Event Hub compatible endpoint for an IoT Hub. Deploy this function to Azure and it will pick up the messages from the
 Azure IoT Edge Module as they enter the IoT Hub, log them, process them, and respond (ACK) to the device.  This component
 includes an example Azure DevOps `build.yaml` file that can be leveraged for build and release pipelines.
+- **SharedCode/Heartbeat/Message**: Shared object model (protobuf) between cloud and edge, to ease serialization across
+applications. This project can be modified to produce a Nuget package that can be consumed as a package reference,
+rather than as a linked/dependent project. 
 
 ## Quickstart
+
+1. Language SDK
+
+- [.NET Core SDK (3.1 or above)](https://www.microsoft.com/net/download)
+
+2. Docker
+
+[Docker Community Edition](https://docs.docker.com/install/) - required for Azure IoT Edge module development, deployment and debugging. Docker CE is free, but may require registration with Docker account to download.  Docker on Windows requires Hyper-V support.  Please make sure your Windows version supports Hyper-V.  For Windows 10, Hyper-V is available with the Pro or Enterprise versions.
+
+3. Azure Resources
 
 To run this project, you will need the following Azure resources:
 - [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/)
@@ -61,15 +74,35 @@ To run this project, you will need the following Azure resources:
 - [Azure Container Registry](https://azure.microsoft.com/en-us/services/container-registry/) or other container registry
 - [Azure Time Series Insights](https://azure.microsoft.com/en-us/services/time-series-insights/)
 
+4. Visual Studio Code and extensions
+    
+> **Note**: Extensions can be installed either via links to the Visual Studio Code Marketplace below or by searching extensions by name in the Marketplace from the Extensions tab in Visual Studio Code.
+
+Install [Visual Studio Code](https://code.visualstudio.com/) first and then add the following extensions:
+
+- [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp) (only required for C# version of sample) - provides C# syntax checking, build and debug support
+- [Azure IoT Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools) - provides Azure IoT Edge development tooling
+
+> **Note**: Azure IoT Tools is an extension pack that installs 3 extensions that will show up in the Extensions pane in Visual Studio Code - *Azure IoT Hub Toolkit*, *Azure IoT Edge* and *Azure IoT Workbench*.
+
+- [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
+
 ### Azure IoT Edge Module (Simulated Edge Device)
 
-This module has configurable variables set in the Dockerfile. Overwrite these values in the Dockerfile, if desired:
-- DEVICE_NAME: name of this device; this should be unique within the IoT Hub.
-- START_WINDOW_IN_SECONDS: if the device sends a message to IoT Hub and receives a message before START_WINDOW_IN_SECONDS
+In the provided `env` file (remove the `.tmp` extension) there are many configurable
+variables.  At a minimum, you will need to fill in the container registry settings.
+If you are using `localhost` are your registry, then you can leave username and
+password blank.
+
+This Watchdog module also has configurable variables set in the Dockerfile.
+The default value embedded in the code is in parantheses () below.
+- START_WINDOW_IN_SECONDS (1): if the device sends a message to IoT Hub and receives a message before START_WINDOW_IN_SECONDS
 seconds, it will consider itself in error.  Set this field to "0" to ignore.
-- END_WINDOW_IN_SECONDS: if the device sends a message to IoT Hub and does not receive a response within
+- END_WINDOW_IN_SECONDS (5): if the device sends a message to IoT Hub and does not receive a response within
 END_WINDOW_IN_SECONDS seconds, it will consider itself offline.
-- BEAT_FREQUENCY_IN_SECONDS: the device will send messages every BEAT_FREQUENCY_IN_SECONDS seconds.
+- HEARTBEAT_FREQUENCY_IN_SECONDS (10): the device will send messages every HEARTBEAT_FREQUENCY_IN_SECONDS seconds.
+
+
 
 ### Iot Hub Listener
 
@@ -84,3 +117,8 @@ analytics service, such as Azure Stream Analytics. The stream analytics service 
 over a tumbling window, for a specific IoT Hub Device ID, to alert when a device has not sent a ping within a set period.
 These empty tumbling window alerts can then allow the cloud-side solution to generate dashboard alerts, or adjust
 solution behavior, such as preventing device deployments if the network connect appears unstable.  
+
+### HeartMessage
+
+The heartbeat message is [protocol buffer](https://developers.google.com/protocol-buffers/).  Simply define it in the `.proto` 
+file and include the `csproj` file.  The underlying C# will be generated for you.
