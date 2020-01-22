@@ -24,6 +24,18 @@ or if the message is out of the accepted time boundary, the watchdog code will, 
 in which it accepts an acknowledgement.  Within the Edge code, there is a stubbed method for what additional behavior 
 should happen if the Edge device does not receive an acknowledgement.
 
+## Contents
+
+| File/folder | Description |
+|-|-|
+| `.gitignore`      | Define what to ignore at commit time. |
+| `CODE_OF_CONDUCT.md` | Microsoft Open Source Code of Conduct and FAQ |
+| `CONTRIBUTING.MD` | Guidelines for contributing to the Sample on Github |
+| `ISSUE_TEMPLATE.md`  | Template for submitting issues on GitHub |
+| `LICENSE`         | The license for the sample |
+| `README.md`       | This README file |
+| `SECURITY.md`     | Instructions for filing security issues directly with Microsoft |
+
 The **Edge Watchdog** provides a solution for monitoring and responding to network partitions in IoT systems that leverage
 an Azure IoT Edge gateway.  This project has 3 primary components:
 - **Share Heartbeat Message Object**: Shared object model (protobuf) between cloud and edge, to ease serialization across
