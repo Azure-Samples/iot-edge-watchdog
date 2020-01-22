@@ -47,7 +47,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.Heartbeat.debug}",
+              "image": "${MODULES.Watchdog.debug}",
               "createOptions": {
                 "Env": [
                   "DEVICE_NAME=$DEVICE_NAME",
