@@ -1,4 +1,40 @@
+---
+page_type: sample
+languages:
+- csharp
+products:
+- azure-iot
+- azure-iot-edge
+- azure-iot-hub
+- azure-functions
+- azure-time-series-insights
+- azure-event-hubs
+- vs-code
+description:
+Azure IoT Edge watchdog pattern which uses Azure Functions to send
+the watchdog heartbeat response message from the cloud.
+---
+
 # Azure IoT Edge Watchdog
+
+This repo introduces the Azure IoT Edge Watchdog pattern which is split into (1) edge and (2) cloud code joined together
+by a (3) common message structure.  This pattern demonstrates a roundtrip verification of a heartbeat message sent from
+an IoT Edge device to an Azure cloud function.  If the edge device does not receive an acknowledgement of its message,
+or if the message is out of the accepted time boundary, the watchdog code will, by default, expand the window of time 
+in which it accepts an acknowledgement.  Within the Edge code, there is a stubbed method for what additional behavior 
+should happen if the Edge device does not receive an acknowledgement.
+
+## Contents
+
+| File/folder | Description |
+|-|-|
+| `.gitignore`      | Define what to ignore at commit time. |
+| `CODE_OF_CONDUCT.md` | Microsoft Open Source Code of Conduct and FAQ |
+| `CONTRIBUTING.MD` | Guidelines for contributing to the Sample on Github |
+| `ISSUE_TEMPLATE.md`  | Template for submitting issues on GitHub |
+| `LICENSE`         | The license for the sample |
+| `README.md`       | This README file |
+| `SECURITY.md`     | Instructions for filing security issues directly with Microsoft |
 
 The **Edge Watchdog** provides a solution for monitoring and responding to network partitions in IoT systems that leverage
 an Azure IoT Edge gateway.  This project has 3 primary components:
