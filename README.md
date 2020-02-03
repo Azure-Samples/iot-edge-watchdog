@@ -10,9 +10,6 @@ products:
 - azure-time-series-insights
 - azure-event-hubs
 - vs-code
-description:
-- Azure IoT Edge watchdog pattern which uses Azure Functions to send
-the watchdog heartbeat response message from the cloud.
 ---
 
 # Azure IoT Edge Watchdog
