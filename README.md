@@ -78,7 +78,7 @@ To run this project, you will need the following Azure resources:
 
 Install [Visual Studio Code](https://code.visualstudio.com/) first and then add the following extensions:
 
-- [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp) (only required for C# version of sample) - provides C# syntax checking, build and debug support
+- [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) (only required for C# version of sample) - provides C# syntax checking, build and debug support
 - [Azure IoT Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools) - provides Azure IoT Edge development tooling
 
 > **Note**: Azure IoT Tools is an extension pack that installs 3 extensions that will show up in the Extensions pane in Visual Studio Code - *Azure IoT Hub Toolkit*, *Azure IoT Edge* and *Azure IoT Workbench*.
