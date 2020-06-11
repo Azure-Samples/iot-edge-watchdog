@@ -30,7 +30,7 @@ RUN dotnet restore
 # Copy and build source files
 COPY shared/HeartbeatMessage/* /app/shared/HeartbeatMessage/
 COPY edge/SimulatedEdgeDevice/modules/Watchdog/* ./
-RUN dotnet publish -c Release -o /app/out
+RUN dotnet publish -c Debug -o /app/out
 
 # Third stage - With debug image as base, use binarys from second stage
 
