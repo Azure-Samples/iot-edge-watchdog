@@ -7,14 +7,14 @@
 FROM microsoft/dotnet:2.1-sdk AS build-env
 
 # Copy csproj files and restore dependencies 
-WORKDIR /app/SimulatedEdgeDevice/modules/Heartbeat
-COPY EdgeHeartbeatMessage/EdgeHeartbeatMessage.csproj /app/EdgeHeartbeatMessage/
-COPY SimulatedEdgeDevice/modules/Heartbeat/Heartbeat.csproj ./
+WORKDIR /app/edge/SimulatedEdgeDevice/modules/Watchdog
+COPY shared/HeartbeatMessage/HeartbeatMessage.csproj /app/shared/HeartbeatMessage/
+COPY edge/SimulatedEdgeDevice/modules/Watchdog/Watchdog.csproj ./
 RUN dotnet restore
 
 # Copy and build source files
-COPY EdgeHeartbeatMessage/* /app/EdgeHeartbeatMessage/
-COPY SimulatedEdgeDevice/modules/Heartbeat/* ./
+COPY shared/HeartbeatMessage/* /app/shared/HeartbeatMessage/
+COPY edge/SimulatedEdgeDevice/modules/Watchdog/* ./
 RUN dotnet publish -c Release -o /app/out
 
 # Second stage - Production Image
