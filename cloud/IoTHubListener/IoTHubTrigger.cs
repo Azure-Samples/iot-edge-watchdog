@@ -15,15 +15,15 @@ namespace GWManagementFunctions
 {
     public class EdgeHeartbeatLatencyRecord
     {
-        public string DeviceId {get; private set;}
-        public string ModuleId {get; private set;}
-        public Int64 MessageId {get; private set;}
-        public Int64 EdgeCreatedTimeTicks {get; private set;}
-        public Int64 IoTHubEnqueuedTimeTicks {get; private set;}
-        public Int64 AzFncInitializedTimeTicks {get; private set;}
-        public Int64 EdgeToHubLatencyMs {get; private set;}
-        public Int64 EdgeToAzFncLatencyMs {get; private set;}
-        public EdgeHeartbeatLatencyRecord(string deviceId, string moduleId, Int64 msgId ,Int64 EdgeCreatedTime, Int64 IotHubEnqueueTime
+        public string DeviceId { get; private set; }
+        public string ModuleId { get; private set; }
+        public Int64 MessageId { get; private set; }
+        public Int64 EdgeCreatedTimeTicks { get; private set; }
+        public Int64 IoTHubEnqueuedTimeTicks { get; private set; }
+        public Int64 AzFncInitializedTimeTicks { get; private set; }
+        public Int64 EdgeToHubLatencyMs { get; private set; }
+        public Int64 EdgeToAzFncLatencyMs { get; private set; }
+        public EdgeHeartbeatLatencyRecord(string deviceId, string moduleId, Int64 msgId, Int64 EdgeCreatedTime, Int64 IotHubEnqueueTime
             , Int64 AzFncInitializedTime)
         {
             this.DeviceId = deviceId;
@@ -31,10 +31,18 @@ namespace GWManagementFunctions
             MessageId = msgId;
             EdgeCreatedTimeTicks = EdgeCreatedTime;
             IoTHubEnqueuedTimeTicks = IotHubEnqueueTime;
-            AzFncInitializedTimeTicks= AzFncInitializedTime;
+            AzFncInitializedTimeTicks = AzFncInitializedTime;
             EdgeToHubLatencyMs = (IoTHubEnqueuedTimeTicks - EdgeCreatedTimeTicks) / TimeSpan.TicksPerMillisecond;
             EdgeToAzFncLatencyMs = (AzFncInitializedTimeTicks - EdgeCreatedTimeTicks) / TimeSpan.TicksPerMillisecond;
         }
+    }
+    public class MessageExpiredException : System.Exception
+    {
+        private static readonly string DefaultMessage = "Message is older than the expiration window.";
+        public MessageExpiredException() : base(DefaultMessage) { }
+        public MessageExpiredException(string message) : base(message) { }
+        public MessageExpiredException(string message, System.Exception innerException)
+        : base(message, innerException) { }
     }
     public static class IoTHubListener
     {
@@ -56,6 +64,12 @@ namespace GWManagementFunctions
             // capture current processing time 
             var azFncInitializedTime = DateTime.UtcNow;
 
+            // Get expiration setting in minutes
+            int MessageExpirationTimeinMinutes;
+            if(!Int32.TryParse(Environment.GetEnvironmentVariable("MessageExpirationTimeinMinutes"), out MessageExpirationTimeinMinutes)) {
+                MessageExpirationTimeinMinutes = 5;
+            }
+
             // initialize IoT Hub Service CLient, this uses an adapter to wrap the 
             // service client code for testability
             var iotHubServiceClient = ServiceClient.CreateFromConnectionString(
@@ -66,12 +80,12 @@ namespace GWManagementFunctions
 
             // process message
             await message
-                .ParseIoTHubMessage(logger)
+                .ParseIoTHubMessage(azFncInitializedTime, MessageExpirationTimeinMinutes, logger)
                 .AckDeviceMessage(serviceClientWrapper, logger)
                 .SendStatisticsToTSI(tsiEventHub, logger, enqueuedTimeUtc, azFncInitializedTime);
         }
 
-        public static Task<HeartbeatMessage> ParseIoTHubMessage(this EventData message, ILogger log)
+        public static Task<HeartbeatMessage> ParseIoTHubMessage(this EventData message, DateTime azFncInitializedTime, Int32 MessageExpirationTimeinMinutes, ILogger log)
         {
             var rawMsg = Encoding.UTF8.GetString(message.Body.Array);
             HeartbeatMessage msg = new HeartbeatMessage();
@@ -79,6 +93,12 @@ namespace GWManagementFunctions
             try
             { 
                 msg = JsonParser.Default.Parse<HeartbeatMessage>(rawMsg); 
+                Int64 TimeSinceMessageCreated = (azFncInitializedTime.Ticks - msg.HeartbeatCreatedTicksUtc) / TimeSpan.TicksPerMillisecond;
+
+                // Throw away messages older than set time (default 5 minutes)
+                if(TimeSinceMessageCreated > (MessageExpirationTimeinMinutes * 60 * 1000)) {
+                    throw new MessageExpiredException();
+                }
             }
             catch(Exception e)
             {
