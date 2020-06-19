@@ -101,8 +101,11 @@ namespace HeartbeatModule
 
         public static TimeSpan GetTimeSpanEnvVar(string varName, double defaultValue){
             var strValue = Environment.GetEnvironmentVariable(varName);
-            var doubleValue = defaultValue; 
-            Double.TryParse(strValue, out doubleValue);
+            double doubleValue;
+            // If the parse fails, assign the default value
+            if(!Double.TryParse(strValue, out doubleValue)) {
+                doubleValue = defaultValue;
+            }
             return TimeSpan.FromSeconds(doubleValue);
         }
 
