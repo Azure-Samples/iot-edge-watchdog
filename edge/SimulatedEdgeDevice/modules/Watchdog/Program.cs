@@ -154,6 +154,7 @@ namespace HeartbeatModule
                 };
                 var json = Google.Protobuf.JsonFormatter.Default.Format(msg);
                 Message sendMsg = new Message( Encoding.UTF8.GetBytes(json) );
+                sendMsg.Properties.Add("msgType", "heartbeat");
 
                 HbStatus[msgId] = MessageStatus.Sent;
 
