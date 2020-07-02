@@ -14,12 +14,14 @@ products:
 
 # Azure IoT Edge Watchdog
 
-This repo introduces the Azure IoT Edge Watchdog pattern which is split into (1) edge and (2) cloud code joined together
-by a (3) common message structure.  This pattern demonstrates a roundtrip verification of a heartbeat message sent from
-an IoT Edge device to an Azure cloud function.  If the edge device does not receive an acknowledgement of its message,
-or if the message is out of the accepted time boundary, the watchdog code will, by default, expand the window of time 
-in which it accepts an acknowledgement.  Within the Edge code, there is a stubbed method for what additional behavior 
-should happen if the Edge device does not receive an acknowledgement.
+This repo introduces the Azure IoT Edge Watchdog pattern which is split into (1) edge and (2)
+cloud code joined together by a (3) common message structure.  This pattern demonstrates a
+roundtrip verification of a heartbeat message sent from an IoT Edge device to an Azure cloud
+function.  If the edge device does not receive an acknowledgement of its message, or if the
+message is out of the accepted time boundary, the watchdog code will, by default, expand the
+window of time in which it accepts an acknowledgement.  Within the Edge code, there is a stubbed
+method for what additional behavior should happen if the Edge device does not receive an
+acknowledgement.
 
 ## Contents
 
@@ -36,32 +38,42 @@ should happen if the Edge device does not receive an acknowledgement.
 | `README.md`       | This README file |
 | `SECURITY.md`     | Instructions for filing security issues directly with Microsoft |
 
-The **Edge Watchdog** provides a solution for monitoring and responding to network partitions in IoT systems that leverage
-an Azure IoT Edge gateway.  This project has 3 primary components:
-- **Edge/SimulatedDevice/Module**: Deploy this module on an Azure IoT Edge device and it will send messages to the corresponding
-IoT Hub and listen for a ACK.  If the IoT Hub fails to respond in a user-defined window, the module will enter a state
-where it consideres itself disconnected.  The next time the module sends a message and receives a response in time, the
-device will move back into online mode. This functionality can be leveraged to have the edge application(s) dynamicall
-adapt to offline operation. This component includes an example Azure DevOps `build.yaml` file that can be leveraged for
-build and release pipelines. 
-- **Cloud/IoTHubListener**: This is an Event Hub triggered Azure Function, where the source Event Hub corresponds to an
-Event Hub compatible endpoint for an IoT Hub. Deploy this function to Azure and it will pick up the messages from the
-Azure IoT Edge Module as they enter the IoT Hub, log them, process them, and respond (ACK) to the device.  This component
-includes an example Azure DevOps `build.yaml` file that can be leveraged for build and release pipelines.
-- **SharedCode/Heartbeat/Message**: Shared object model (protobuf) between cloud and edge, to ease serialization across
-applications. This project can be modified to produce a Nuget package that can be consumed as a package reference,
-rather than as a linked/dependent project. 
+The **Edge Watchdog** provides a solution for monitoring and responding to network partitions in
+IoT systems that leverage an Azure IoT Edge gateway.  This project has 3 primary components:
+
+- **Edge/SimulatedDevice/Module**: Deploy this module on an Azure IoT Edge device and it will
+send messages to the corresponding IoT Hub and listen for a ACK.  If the IoT Hub fails to respond
+in a user-defined window, the module will enter a state where it consideres itself disconnected. 
+The next time the module sends a message and receives a response in time, the device will move
+back into online mode. This functionality can be leveraged to have the edge application(s)
+dynamically adapt to offline operation. This component includes an example Azure DevOps
+`build.yaml` file that can be leveraged for build and release pipelines. 
+
+- **Cloud/IoTHubListener**: This is an Event Hub triggered Azure Function, where the source Event
+Hub corresponds to an Event Hub compatible endpoint for an IoT Hub. Deploy this function to Azure
+and it will pick up the messages from the Azure IoT Edge Module as they enter the IoT Hub, log
+them, process them, and respond (ACK) to the device.  This component includes an example Azure
+DevOps `build.yaml` file that can be leveraged for build and release pipelines.
+
+- **SharedCode/Heartbeat/Message**: Shared object model (protobuf) between cloud and edge, to
+ease serialization across applications. This project can be modified to produce a Nuget package
+that can be consumed as a package reference, rather than as a linked/dependent project. 
 
 ## Quickstart
 
 1. Language SDK
 
 - [.NET Core SDK (3.1 or above)](https://www.microsoft.com/net/download)
-- [Node.js (8.5 or above)](https://nodejs.org) - required for local development of the Azure Functions Core Tools.
+- [Node.js (8.5 or above)](https://nodejs.org) - required for local development of the Azure
+Functions Core Tools.
 
 2. Docker
 
-[Docker Community Edition](https://docs.docker.com/install/) - required for Azure IoT Edge module development, deployment and debugging. Docker CE is free, but may require registration with Docker account to download.  Docker on Windows requires Hyper-V support.  Please make sure your Windows version supports Hyper-V.  For Windows 10, Hyper-V is available with the Pro or Enterprise versions.
+[Docker Community Edition](https://docs.docker.com/install/) - required for Azure IoT Edge
+module development, deployment and debugging. Docker CE is free, but may require registration
+with Docker account to download.  Docker on Windows requires Hyper-V support.  Please make sure
+your Windows version supports Hyper-V.  For Windows 10, Hyper-V is available with the Pro or
+Enterprise versions.
 
 3. Azure Resources
 
@@ -69,17 +81,23 @@ To run this project, you will need the following Azure resources:
 - [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/)
 - [Azure Event Hubs](https://azure.microsoft.com/en-us/services/event-hubs/)
 - [Azure IoT Edge](https://azure.microsoft.com/en-us/services/iot-edge/)
-- [Azure Container Registry](https://azure.microsoft.com/en-us/services/container-registry/) or other container registry
+- [Azure Container Registry](https://azure.microsoft.com/en-us/services/container-registry/) or
+other container registry
 - [Azure Time Series Insights](https://azure.microsoft.com/en-us/services/time-series-insights/)
 
 4. Visual Studio Code and extensions
     
-> **Note**: Extensions can be installed either via links to the Visual Studio Code Marketplace below or by searching extensions by name in the Marketplace from the Extensions tab in Visual Studio Code.
+> **Note**: Extensions can be installed either via links to the Visual Studio Code Marketplace
+below or by searching extensions by name in the Marketplace from the Extensions tab in Visual
+Studio Code.
 
-Install [Visual Studio Code](https://code.visualstudio.com/) first and then add the following extensions:
+Install [Visual Studio Code](https://code.visualstudio.com/) first and then add the following
+extensions:
 
-- [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) (only required for C# version of sample) - provides C# syntax checking, build and debug support
+- [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) (only
+required for C# version of sample) - provides C# syntax checking, build and debug support
 - [Azure IoT Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools) - provides Azure IoT Edge development tooling
+
 
 > **Note**: Azure IoT Tools is an extension pack that installs 3 extensions that will show up in the Extensions pane in Visual Studio Code - *Azure IoT Hub Toolkit*, *Azure IoT Edge* and *Azure IoT Workbench*.
 
@@ -88,8 +106,9 @@ Install [Visual Studio Code](https://code.visualstudio.com/) first and then add 
 
 5. Azure IoT EdgeHub Dev Tool
 
- [Azure IoT EdgeHub Dev Tool](https://pypi.org/project/iotedgehubdev/) is a version of the Azure IoT Edge runtime for local development machine.  After verifying Python and Pip (2.7/3.6 or above) are installed and in the path, install **[iotedgehubdev](https://pypi.org/project/iotedgehubdev/)** with Pip:
-
+ [Azure IoT EdgeHub Dev Tool](https://pypi.org/project/iotedgehubdev/) is a version of the Azure
+ IoT Edge runtime for local development machine.  After verifying Python and Pip (2.7/3.6 or
+ above) are installed and in the path, install **[iotedgehubdev](https://pypi.org/project/iotedgehubdev/)** with Pip:
     ```bash
     pip install --upgrade iotedgehubdev
     ```
