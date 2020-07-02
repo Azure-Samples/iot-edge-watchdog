@@ -45,10 +45,9 @@ namespace IoTHubListenerTests
             var messageId = (Int64)1000;
             var deviceId = "deviceId";
             var moduleId = "moduleId";
-
+            var data = GetEventData("Heartbeat", deviceId, moduleId, messageId);
             var directMethodResult = 
-                IoTHubListener.AckDeviceMessage(
-                    GetEventData("Heartbeat", deviceId, moduleId, messageId),
+                data.AckDeviceMessage(
                     serviceClientMock.Object,
                     loggerMock.Object);   
 
