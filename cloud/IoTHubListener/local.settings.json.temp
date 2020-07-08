@@ -4,6 +4,7 @@
         "IoTHubConnectionString":"<intentionally blank>",
         "IoTHubEventHubEndpointConnectionString" : "<intentionally blank>",
         "EventHubEndpointConnectionString":"<intentionally blank",
+        "EventHubIngestConnectionString":"<intentionally blank",
         "AzureWebJobsStorage": "<intentionally blank>",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet"
     }

@@ -45,11 +45,11 @@ namespace GWManagementFunctions
 
                     // initialize IoT Hub Service CLient, this uses an adapter to wrap the 
                     // service client code for testability
-                    //var iotHubServiceClient = ServiceClient.CreateFromConnectionString(
-                    //        Environment.GetEnvironmentVariable("IoTHubConnectionString"),
-                    //        Microsoft.Azure.Devices.TransportType.Amqp);
+                    var iotHubServiceClient = ServiceClient.CreateFromConnectionString(
+                            Environment.GetEnvironmentVariable("IoTHubConnectionString"),
+                            Microsoft.Azure.Devices.TransportType.Amqp);
 
-                    //var serviceClientWrapper = new IoTHubServiceClient(iotHubServiceClient, logger); 
+                    var serviceClientWrapper = new IoTHubServiceClient(iotHubServiceClient, logger); 
 
                     // process message
                     await message
@@ -57,13 +57,12 @@ namespace GWManagementFunctions
                                 azFncInitializedTime,
                                 MessageExpirationTimeinMinutes,
                                 logger)
-                        //.AckDeviceMessage(serviceClientWrapper, logger)
+                        .AckDeviceMessage(serviceClientWrapper, logger)
                         .SendStatisticsToTSI(
                                 tsiEventHub,
                                 logger,
                                 enqueuedTimeUtc,
                                 azFncInitializedTime);
-                    // Replace these two lines with your processing logic.
                     await Task.Yield();
                 }
                 catch (Exception e)
