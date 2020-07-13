@@ -28,7 +28,8 @@ namespace HeartbeatModule
         static DeviceStatus connectivityStatus = DeviceStatus.Offline;
         static Dictionary<Int64, MessageStatus> HbStatus = new Dictionary<Int64, MessageStatus>();
 
-        // The follow variables can be updated with the moduleTwin and are updated through the OnDesiredPropertiesUpdate method
+        // The follow variables can be updated with the moduleTwin and are updated through the 
+        // OnDesiredPropertiesUpdate method
         static uint backoffExp = 1; // used for exponential backoff
         static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
         static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
@@ -154,7 +155,7 @@ namespace HeartbeatModule
                 };
                 var json = Google.Protobuf.JsonFormatter.Default.Format(msg);
                 Message sendMsg = new Message( Encoding.UTF8.GetBytes(json) );
-                sendMsg.Properties.Add("msgType", "heartbeat");
+                sendMsg.Properties.Add("msgType", "watchdog");
 
                 HbStatus[msgId] = MessageStatus.Sent;
 
