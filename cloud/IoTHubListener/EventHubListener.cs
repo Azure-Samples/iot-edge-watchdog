@@ -14,15 +14,28 @@ namespace GWManagementFunctions
 {
     public static class EventHubListener
     {
+        /// <summary>
+        /// This function is executed in response to the 
+        /// <see cref="EventHubTriggerAttribute">Event Hub Trigger</see>
+        /// specified in the parameters. It takes the events from the trigger,
+        /// sends messages to TSI, and sends an ACK back to the IoT Hub.
+        /// </summary>
+        /// <param name="events">
+        /// The inbound events from the Event Hub Trigger
+        /// </param>
+        /// <param name="tsiEventHub">
+        /// A destination binding for an EventHub connected to TSI
+        /// </param>
+        /// <param name="logger">The logger for the function.</param>
+        /// <returns></returns>
         [FunctionName("EventHubListener")]
         public static async Task Run(
                 [EventHubTrigger(
                     "messages/events",
                     Connection = "EventHubIngestConnectionString")]
                 EventData[] events,
-                [EventHub("dest", Connection="EventHubEndpointConnectionString")]
+                [EventHub("dest", Connection="EventHubEgressConnectionString")]
                 IAsyncCollector<string> tsiEventHub,
-                DateTime enqueuedTimeUtc,
                 ILogger logger)
         {
             var exceptions = new List<Exception>();
@@ -45,8 +58,10 @@ namespace GWManagementFunctions
 
                     // initialize IoT Hub Service CLient, this uses an adapter to wrap the 
                     // service client code for testability
+                    // See the IoT Hub Endpoint Documentation for more information
+                    // (https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-endpoints)
                     var iotHubServiceClient = ServiceClient.CreateFromConnectionString(
-                            Environment.GetEnvironmentVariable("IoTHubConnectionString"),
+                            Environment.GetEnvironmentVariable("IoTHubAckConnectionString"),
                             Microsoft.Azure.Devices.TransportType.Amqp);
 
                     var serviceClientWrapper = new IoTHubServiceClient(iotHubServiceClient, logger); 
@@ -61,7 +76,7 @@ namespace GWManagementFunctions
                         .SendStatisticsToTSI(
                                 tsiEventHub,
                                 logger,
-                                enqueuedTimeUtc,
+                                message.SystemProperties.EnqueuedTimeUtc,
                                 azFncInitializedTime);
                     await Task.Yield();
                 }
