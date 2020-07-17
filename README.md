@@ -199,5 +199,3 @@ setting `UseDevelopmentStorage=true`.
 
 The heartbeat message is [protocol buffer](https://developers.google.com/protocol-buffers/).  Simply define it in the `.proto` 
 file and include the `csproj` file.  The underlying C# will be generated for you.
-
-
