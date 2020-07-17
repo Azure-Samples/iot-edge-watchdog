@@ -59,6 +59,16 @@ DevOps `build.yaml` file that can be leveraged for build and release pipelines.
 ease serialization across applications. This project can be modified to produce a Nuget package
 that can be consumed as a package reference, rather than as a linked/dependent project. 
 
+## Deployment
+The deployment.debug.template.json and deployment.template.json are currently setup to build and push with Visual Studio Code tooling. 
+
+To build and push the Watchdog solution using Visual Studio, you will need to modify the deployment files to reference the module image in the way the project structure is defined in Visual Studio.
+```
+            "settings": {
+              "image": "${MODULEDIR<./modules/Watchdog>}",
+            }
+```
+
 ## Quickstart
 
 1. Language SDK
@@ -85,23 +95,31 @@ To run this project, you will need the following Azure resources:
 other container registry
 - [Azure Time Series Insights](https://azure.microsoft.com/en-us/services/time-series-insights/)
 
-4. Visual Studio Code and extensions
+4. IDE and extensions
+- Visual Studio Code
     
-> **Note**: Extensions can be installed either via links to the Visual Studio Code Marketplace
-below or by searching extensions by name in the Marketplace from the Extensions tab in Visual
-Studio Code.
+    > **Note**: Extensions can be installed either via links to the Visual Studio Code Marketplace
+    below or by searching extensions by name in the Marketplace from the Extensions tab in Visual
+    Studio Code.
 
-Install [Visual Studio Code](https://code.visualstudio.com/) first and then add the following
-extensions:
+    Install [Visual Studio Code](https://code.visualstudio.com/) first and then add the following
+    extensions:
 
-- [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) (only
-required for C# version of sample) - provides C# syntax checking, build and debug support
-- [Azure IoT Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools) - provides Azure IoT Edge development tooling
+    - [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) (only
+    required for C# version of sample) - provides C# syntax checking, build and debug support
+    - [Azure IoT Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools) - provides Azure IoT Edge development tooling
 
 
-> **Note**: Azure IoT Tools is an extension pack that installs 3 extensions that will show up in the Extensions pane in Visual Studio Code - *Azure IoT Hub Toolkit*, *Azure IoT Edge* and *Azure IoT Workbench*.
+    > **Note**: Azure IoT Tools is an extension pack that installs 3 extensions that will show up in the Extensions pane in Visual Studio Code - *Azure IoT Hub Toolkit*, *Azure IoT Edge* and *Azure IoT Workbench*.
 
-- [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
+    - [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
+
+- Visual Studio
+    > **Note**: Extensions can be installed either via links to the Visual Studio Marketplace
+    below or by searching for the extension by name from the Extensions menu in Visual Studio.
+    - Install [Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2019) first and then add the following extensions:
+    - [Azure IoT Edge Tools](https://marketplace.visualstudio.com/items?itemName=vsc-iot.vs16iotedgetools) - provides Azure IoT Edge development tooling for Visual Studio
+    - [Azure Function](https://marketplace.visualstudio.com/items?itemName=VisualStudioWebandAzureTools.AzureFunctionsandWebJobsTools) - skip if using Visual Studio 2019 
 
 
 5. Azure IoT EdgeHub Dev Tool
