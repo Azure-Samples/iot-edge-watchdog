@@ -50,10 +50,9 @@
               "image": "${MODULES.Watchdog.debug}",
               "createOptions": {
                 "Env": [
-                  "DEVICE_NAME=$DEVICE_NAME",
                   "START_WINDOW_IN_SECONDS=$START_WINDOW_IN_SECONDS",
                   "END_WINDOW_IN_SECONDS=$END_WINDOW_IN_SECONDS",
-                  "BEAT_FREQUENCY_IN_SECONDS=$BEAT_FREQUENCY_IN_SECONDS"
+                  "HEARTBEAT_FREQUENCY_IN_SECONDS=$HEARTBEAT_FREQUENCY_IN_SECONDS"
                 ]
               }
             }
