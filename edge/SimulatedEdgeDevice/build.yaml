@@ -17,7 +17,7 @@ steps:
     action: Push module images
     containerregistrytype: Azure Container Registry
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-    azureContainerRegistry: '{"loginServer":"$(azureContainerRegistry)", "id" : "/subscriptions/${subscription_id}/resourceGroups/${resourcegroup_name}/providers/Microsoft.ContainerRegistry/registries/${registry_name}"}'
+    azureContainerRegistry: '{"loginServer":"$(azureContainerRegistry)", "id" : "/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/${registryName}"}'
     templateFilePath: deployment.template.json
     defaultPlatform: amd64  
 - task: AzureIoTEdge@2
