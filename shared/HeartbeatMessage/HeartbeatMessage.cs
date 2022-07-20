@@ -30,31 +30,39 @@ namespace HeartbeatProto {
             "ZWF0Q3JlYXRlZFRpY2tzVXRjGAUgASgDYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::HeartbeatProto.HeartbeatMessage), global::HeartbeatProto.HeartbeatMessage.Parser, new[]{ "MsgType", "DeviceId", "ModuleId", "Id", "HeartbeatCreatedTicksUtc" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::HeartbeatProto.HeartbeatMessage), global::HeartbeatProto.HeartbeatMessage.Parser, new[]{ "MsgType", "DeviceId", "ModuleId", "Id", "HeartbeatCreatedTicksUtc" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
   #region Messages
-  public sealed partial class HeartbeatMessage : pb::IMessage<HeartbeatMessage> {
+  public sealed partial class HeartbeatMessage : pb::IMessage<HeartbeatMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
     private static readonly pb::MessageParser<HeartbeatMessage> _parser = new pb::MessageParser<HeartbeatMessage>(() => new HeartbeatMessage());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pb::MessageParser<HeartbeatMessage> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
       get { return global::HeartbeatProto.HeartbeatMessageReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     pbr::MessageDescriptor pb::IMessage.Descriptor {
       get { return Descriptor; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public HeartbeatMessage() {
       OnConstruction();
     }
@@ -62,6 +70,7 @@ namespace HeartbeatProto {
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public HeartbeatMessage(HeartbeatMessage other) : this() {
       msgType_ = other.msgType_;
       deviceId_ = other.deviceId_;
@@ -72,6 +81,7 @@ namespace HeartbeatProto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public HeartbeatMessage Clone() {
       return new HeartbeatMessage(this);
     }
@@ -80,6 +90,7 @@ namespace HeartbeatProto {
     public const int MsgTypeFieldNumber = 1;
     private string msgType_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public string MsgType {
       get { return msgType_; }
       set {
@@ -91,6 +102,7 @@ namespace HeartbeatProto {
     public const int DeviceIdFieldNumber = 2;
     private string deviceId_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public string DeviceId {
       get { return deviceId_; }
       set {
@@ -102,6 +114,7 @@ namespace HeartbeatProto {
     public const int ModuleIdFieldNumber = 3;
     private string moduleId_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public string ModuleId {
       get { return moduleId_; }
       set {
@@ -113,6 +126,7 @@ namespace HeartbeatProto {
     public const int IdFieldNumber = 4;
     private long id_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public long Id {
       get { return id_; }
       set {
@@ -124,6 +138,7 @@ namespace HeartbeatProto {
     public const int HeartbeatCreatedTicksUtcFieldNumber = 5;
     private long heartbeatCreatedTicksUtc_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public long HeartbeatCreatedTicksUtc {
       get { return heartbeatCreatedTicksUtc_; }
       set {
@@ -132,11 +147,13 @@ namespace HeartbeatProto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
       return Equals(other as HeartbeatMessage);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool Equals(HeartbeatMessage other) {
       if (ReferenceEquals(other, null)) {
         return false;
@@ -153,6 +170,7 @@ namespace HeartbeatProto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
       if (MsgType.Length != 0) hash ^= MsgType.GetHashCode();
@@ -167,12 +185,17 @@ namespace HeartbeatProto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override string ToString() {
       return pb::JsonFormatter.ToDiagnosticString(this);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
       if (MsgType.Length != 0) {
         output.WriteRawTag(10);
         output.WriteString(MsgType);
@@ -196,9 +219,41 @@ namespace HeartbeatProto {
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
+    #endif
     }
 
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (MsgType.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(MsgType);
+      }
+      if (DeviceId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(DeviceId);
+      }
+      if (ModuleId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(ModuleId);
+      }
+      if (Id != 0L) {
+        output.WriteRawTag(32);
+        output.WriteInt64(Id);
+      }
+      if (HeartbeatCreatedTicksUtc != 0L) {
+        output.WriteRawTag(40);
+        output.WriteInt64(HeartbeatCreatedTicksUtc);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
       if (MsgType.Length != 0) {
@@ -223,6 +278,7 @@ namespace HeartbeatProto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void MergeFrom(HeartbeatMessage other) {
       if (other == null) {
         return;
@@ -246,7 +302,11 @@ namespace HeartbeatProto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
       uint tag;
       while ((tag = input.ReadTag()) != 0) {
         switch(tag) {
@@ -275,7 +335,43 @@ namespace HeartbeatProto {
           }
         }
       }
+    #endif
     }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            MsgType = input.ReadString();
+            break;
+          }
+          case 18: {
+            DeviceId = input.ReadString();
+            break;
+          }
+          case 26: {
+            ModuleId = input.ReadString();
+            break;
+          }
+          case 32: {
+            Id = input.ReadInt64();
+            break;
+          }
+          case 40: {
+            HeartbeatCreatedTicksUtc = input.ReadInt64();
+            break;
+          }
+        }
+      }
+    }
+    #endif
 
   }
 

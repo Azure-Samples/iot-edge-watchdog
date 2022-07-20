@@ -4,7 +4,7 @@
 # resulting in a much smaller production image (removes build artifacts) 
 
 #First stage - Build/Compile
-FROM microsoft/dotnet:2.1-sdk AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 
 # Copy csproj files and restore dependencies 
 WORKDIR /app/edge/SimulatedEdgeDevice/modules/Watchdog
@@ -19,7 +19,7 @@ RUN dotnet publish -c Release -o /app/out
 
 # Second stage - Production Image
 # Copy binaries to new image
-FROM microsoft/dotnet:2.1-runtime-stretch-slim
+FROM mcr.microsoft.com/dotnet/runtime:6.0
 WORKDIR /app
 COPY --from=build-env /app/out ./
 

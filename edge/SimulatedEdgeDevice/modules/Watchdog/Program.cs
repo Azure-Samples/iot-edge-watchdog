@@ -22,8 +22,8 @@ namespace HeartbeatModule
         static int END_WINDOW_IN_SECONDS = 5;
         static int HEARTBEAT_FREQUENCY_IN_SECONDS = 10;
 
-        enum MessageStatus {Sent, Acked};
-        enum DeviceStatus {Online, Offline};
+        enum MessageStatus { Sent, Acked };
+        enum DeviceStatus { Online, Offline };
         static int counter;
         static DeviceStatus connectivityStatus = DeviceStatus.Offline;
         static Dictionary<Int64, MessageStatus> HbStatus = new Dictionary<Int64, MessageStatus>();
@@ -31,32 +31,32 @@ namespace HeartbeatModule
         // The follow variables can be updated with the moduleTwin and are updated through the 
         // OnDesiredPropertiesUpdate method
         static uint backoffExp = 1; // used for exponential backoff
-        static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
-        static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
-        static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);        
-        static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", END_WINDOW_IN_SECONDS);  
+		static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
+		static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
+		static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);
+        static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", END_WINDOW_IN_SECONDS);
         static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", HEARTBEAT_FREQUENCY_IN_SECONDS);
-        static TimeSpan defaultEndWindow = endWindow;  
+        static TimeSpan defaultEndWindow = endWindow;
         static LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
 
         static async Task Main(string[] args)
         {
             levelSwitch.MinimumLevel = LogEventLevel.Debug;
             Log.Logger = new LoggerConfiguration().MinimumLevel.ControlledBy(levelSwitch)
-                .WriteTo.Console(outputTemplate:"[{Timestamp:yyyy-MM-dd HH:mm:ss K} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss K} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
 
             //To enable the debug wait code, pass 'true' to Init here Init(true);
             ModuleClient ioTHubModuleClient = await Init();
             Log.Information("DeviceId: {deviceId}, ModuleId: {moduleId}, Start Window: {StartWindow}, End Window: {EndWindow}, Beat Frequency: {BeatFrequency}"
-                ,deviceId, moduleId, startWindow, endWindow, hartbeatFrequency);
+                , deviceId, moduleId, startWindow, endWindow, hartbeatFrequency);
 
             var moduleTwin = await ioTHubModuleClient.GetTwinAsync();
-            
+
             // If any variables are set in the desired properties of the module twin, 
             // update them here
             await OnDesiredPropertiesUpdate(moduleTwin.Properties.Desired, ioTHubModuleClient);
-            
+
             // Attach a callback for updates to the module twin's desired properties.
             await ioTHubModuleClient.SetDesiredPropertyUpdateCallbackAsync(OnDesiredPropertiesUpdate, null);
 
@@ -64,19 +64,20 @@ namespace HeartbeatModule
             // if it overflows
             // This number of message at 28,000,000,000 (billion) will not overflow for 
             // ~902,482 years   (MaxValue / 28B / 365)
-            Int64 msgId = 0; 
+            Int64 msgId = 0;
 
             // Send heartbeats to IoTHub at a specified frequency
-            while(true)
+            while (true)
             {
                 await SendHeartbeat(ioTHubModuleClient, Interlocked.Read(ref msgId));
                 // delay for window, check internal state for update
                 await Task.Delay(endWindow);
-                if(HbStatus[msgId] != MessageStatus.Acked) 
+                if (HbStatus[msgId] != MessageStatus.Acked)
                 {
                     DeviceTimeout();
                 }
-                else if(connectivityStatus == DeviceStatus.Offline){
+                else if (connectivityStatus == DeviceStatus.Offline)
+                {
                     Log.Information("Device ID: {deviceId} is online.", deviceId);
                     connectivityStatus = DeviceStatus.Online;
                     endWindow = defaultEndWindow;
@@ -86,7 +87,7 @@ namespace HeartbeatModule
                 Interlocked.CompareExchange(ref msgId, 0, System.Int64.MaxValue);
                 Interlocked.Increment(ref msgId);
 
-                if(hartbeatFrequency - endWindow > TimeSpan.Zero) await Task.Delay(hartbeatFrequency - endWindow);           
+                if (hartbeatFrequency - endWindow > TimeSpan.Zero) await Task.Delay(hartbeatFrequency - endWindow);
             }
         }
 
@@ -100,11 +101,13 @@ namespace HeartbeatModule
             return tcs.Task;
         }
 
-        public static TimeSpan GetTimeSpanEnvVar(string varName, double defaultValue){
+        public static TimeSpan GetTimeSpanEnvVar(string varName, double defaultValue)
+        {
             var strValue = Environment.GetEnvironmentVariable(varName);
             double doubleValue;
             // If the parse fails, assign the default value
-            if(!Double.TryParse(strValue, out doubleValue)) {
+            if (!Double.TryParse(strValue, out doubleValue))
+            {
                 doubleValue = defaultValue;
             }
             return TimeSpan.FromSeconds(doubleValue);
@@ -133,7 +136,7 @@ namespace HeartbeatModule
             ModuleClient ioTHubModuleClient = await ModuleClient.CreateFromEnvironmentAsync(settings);
             await ioTHubModuleClient.OpenAsync();
             Log.Information("IoT Hub Heartbeat module client on {deviceId} initialized", deviceId);
-           
+
             // Register callback to be called when a message is received by the module
             await ioTHubModuleClient.SetMethodDefaultHandlerAsync(AckMessage, ioTHubModuleClient);
 
@@ -154,27 +157,28 @@ namespace HeartbeatModule
                     HeartbeatCreatedTicksUtc = DateTime.UtcNow.Ticks
                 };
                 var json = Google.Protobuf.JsonFormatter.Default.Format(msg);
-                Message sendMsg = new Message( Encoding.UTF8.GetBytes(json) );
+                Message sendMsg = new Message(Encoding.UTF8.GetBytes(json));
                 sendMsg.Properties.Add("msgType", "watchdog");
 
                 HbStatus[msgId] = MessageStatus.Sent;
 
                 await moduleClient.SendEventAsync("sendHeartbeat", sendMsg);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Error("Error Sending Heartbeat: {Error}", e);
                 Console.WriteLine(e.Message);
             }
         }
 
-        private static void DeviceTimeout(){
+        private static void DeviceTimeout()
+        {
             // Update this function if you want something else to happen when the device detects
             // it is offline.
             Log.Information("Client Name: {deviceId} timed out and is offline", deviceId);
             connectivityStatus = DeviceStatus.Offline;
             backoffExp++;
-            endWindow = TimeSpan.FromSeconds(Math.Pow( defaultEndWindow.TotalSeconds, backoffExp));
+            endWindow = TimeSpan.FromSeconds(Math.Pow(defaultEndWindow.TotalSeconds, backoffExp));
         }
 
         /// <summary>
@@ -192,22 +196,22 @@ namespace HeartbeatModule
             }
 
             byte[] messageBytes = message.Data;
-            string messageString = Encoding.UTF8.GetString( messageBytes );
+            string messageString = Encoding.UTF8.GetString(messageBytes);
 
             if (!string.IsNullOrEmpty(messageString))
             {
                 var msg = JsonParser.Default.Parse<HeartbeatMessage>(messageString);
                 Log.Information("Heartbeat message {MsgId} on {deviceId} acknowledged.", msg.Id, deviceId);
-                if(HbStatus.ContainsKey(msg.Id)) HbStatus[msg.Id] = MessageStatus.Acked;
+                if (HbStatus.ContainsKey(msg.Id)) HbStatus[msg.Id] = MessageStatus.Acked;
             }
             else
             {
                 Log.Information("Heartbeat acknowledge message failed with no data received on {deviceID}", deviceId);
             }
-    
+
             return Task.FromResult(new MethodResponse(200));
         }
-    
+
         static Task OnDesiredPropertiesUpdate(TwinCollection desiredProperties, object userContext)
         {
             try
@@ -233,7 +237,7 @@ namespace HeartbeatModule
                 }
                 if (desiredProperties.Contains("defaultEndWindow") && desiredProperties["defaultEndWindow"] != null)
                 {
-                    var rawDefaultEndWindow =  desiredProperties["defaultEndWindow"] as JValue;
+                    var rawDefaultEndWindow = desiredProperties["defaultEndWindow"] as JValue;
                     defaultEndWindow = TimeSpan.FromSeconds(Convert.ToDouble(rawDefaultEndWindow.Value));
                 }
                 if (desiredProperties.Contains("beatFrequency") && desiredProperties["beatFrequency"] != null)
@@ -241,8 +245,9 @@ namespace HeartbeatModule
                     var rawBeatFrequency = desiredProperties["beatFrequency"] as JValue;
                     hartbeatFrequency = TimeSpan.FromSeconds(Convert.ToDouble(rawBeatFrequency.Value));
                 }
-                if(desiredProperties.Contains("logEventLevel") && desiredProperties["logEventLevel"] != null){
-                    switch(desiredProperties["logEventLevel"].ToString().ToLower())
+                if (desiredProperties.Contains("logEventLevel") && desiredProperties["logEventLevel"] != null)
+                {
+                    switch (desiredProperties["logEventLevel"].ToString().ToLower())
                     {
                         case "verbose":
                             levelSwitch.MinimumLevel = LogEventLevel.Verbose;
@@ -262,7 +267,7 @@ namespace HeartbeatModule
                         default:
                             levelSwitch.MinimumLevel = LogEventLevel.Debug;
                             Log.Debug("Level Switch cannot be changed to {DesiredProperty} and is now set to Level:Debug"
-                                ,desiredProperties["logEventLevel"]);
+                                , desiredProperties["logEventLevel"]);
                             break;
                     }
                 }
