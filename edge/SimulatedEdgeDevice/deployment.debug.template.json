@@ -41,7 +41,7 @@
           }
         },
         "modules": {
-          "Heartbeat": {
+          "Watchdog": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
@@ -52,7 +52,9 @@
                 "Env": [
                   "START_WINDOW_IN_SECONDS=$START_WINDOW_IN_SECONDS",
                   "END_WINDOW_IN_SECONDS=$END_WINDOW_IN_SECONDS",
-                  "HEARTBEAT_FREQUENCY_IN_SECONDS=$HEARTBEAT_FREQUENCY_IN_SECONDS"
+                  "HEARTBEAT_FREQUENCY_IN_SECONDS=$HEARTBEAT_FREQUENCY_IN_SECONDS",
+                  "IOTEDGE_DEVICEID=$IOTEDGE_DEVICEID",
+                  "IOTEDGE_MODULEID=$IOTEDGE_MODULEID"
                 ]
               }
             }

@@ -24,10 +24,11 @@ namespace GWManagementFunctions
             var rawMsg = Encoding.UTF8.GetString(message.Body.Array);
 
             try
-            { 
-                var msg = JsonParser.Default.Parse<HeartbeatMessage>(rawMsg); 
-                Int64 TimeSinceMessageCreated = (azFncInitializedTime.Ticks -
-                        msg.HeartbeatCreatedTicksUtc) / TimeSpan.TicksPerMillisecond;
+            {
+				var msg = JsonParser.Default.Parse<HeartbeatMessage>(rawMsg);
+
+				Int64 TimeSinceMessageCreated = (azFncInitializedTime.Ticks -
+                                                 msg.HeartbeatCreatedTicksUtc) / TimeSpan.TicksPerMillisecond;
 
                 // Throw away messages older than set time (default 5 minutes)
                 if(TimeSinceMessageCreated > (MessageExpirationTimeinMinutes * 60 * 1000)) {
