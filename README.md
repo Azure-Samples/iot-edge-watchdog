@@ -126,18 +126,18 @@ other container registry
  [Azure IoT EdgeHub Dev Tool](https://pypi.org/project/iotedgehubdev/) is a version of the Azure
  IoT Edge runtime for local development machine.  After verifying Python and Pip (2.7/3.6 or
  above) are installed and in the path, install **[iotedgehubdev](https://pypi.org/project/iotedgehubdev/)** with Pip:
-    ```bash
+ ```bash
     pip install --upgrade iotedgehubdev
-    ```
+ ```
 
 6. Azure Functions Core Tools
 
  [Azure Functions Core Tools](https://github.com/Microsoft/vscode-azurefunctions/blob/master/README.md) is a version of the Azure Functions runtime for local development machine. It also provides commands to create functions, connect to Azure, and deploy Azure Function projects.  After verifying Node.js (8.5 or above) is installed and in the path, install **[azure-functions-core-tools](https://www.npmjs.com/package/azure-functions-core-tools)** with
     npm:
 
-    ```bash
+```bash
     npm install -g azure-functions-core-tools
-    ```
+```
 
 7. Azure Storage Emulator (optional, Windows only)
 
