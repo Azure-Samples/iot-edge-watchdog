@@ -117,9 +117,8 @@ other container registry
 - Visual Studio
     > **Note**: Extensions can be installed either via links to the Visual Studio Marketplace
     below or by searching for the extension by name from the Extensions menu in Visual Studio.
-    - Install [Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2019) first and then add the following extensions:
+    - Install [Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022) first and then add the following extensions:
     - [Azure IoT Edge Tools](https://marketplace.visualstudio.com/items?itemName=vsc-iot.vs16iotedgetools) - provides Azure IoT Edge development tooling for Visual Studio
-    - [Azure Function](https://marketplace.visualstudio.com/items?itemName=VisualStudioWebandAzureTools.AzureFunctionsandWebJobsTools) - skip if using Visual Studio 2019 
 
 
 5. Azure IoT EdgeHub Dev Tool
@@ -163,6 +162,10 @@ seconds, it will consider itself in error.  Set this field to "0" to ignore.
 END_WINDOW_IN_SECONDS seconds, it will consider itself offline.
 - HEARTBEAT_FREQUENCY_IN_SECONDS (10): the device will send messages every HEARTBEAT_FREQUENCY_IN_SECONDS seconds.
 
+There are two additional settings to be specified related to the device:
+- IOTEDGE_DEVICEID: deviceId that is created in Azure IoTHub
+- IOTEDGE_MODULEID: moduleId of the Watchdog Edge Module --> default value "*Watchdog*"
+
 ### Iot Hub Listener
 
 The **IoT Hub Listener** is an Azure Function designed to be intermediate plumbing between an Azure IoT Hub and a
@@ -191,8 +194,8 @@ store for Azure Functions.  This can be a local Azure Storage Emulator with the
 setting `UseDevelopmentStorage=true`.
 
 `IoTHubEventHubEndpointConnectionString`
-`IoTHubConnectionString`
-`EventHubEndpointConnectionString`
+`IoTHubAckConnectionString`
+`EventHubEgressConnectionString`
 `AzureWebJobsStorage`
 
 ### HeartMessage

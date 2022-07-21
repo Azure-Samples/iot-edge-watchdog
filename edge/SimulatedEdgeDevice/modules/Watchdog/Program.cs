@@ -18,6 +18,7 @@ namespace HeartbeatModule
 {
     public class Program
     {
+        static string MODULE_ID = "Watchdog";
         static int START_WINDOW_IN_SECONDS = 1;
         static int END_WINDOW_IN_SECONDS = 5;
         static int HEARTBEAT_FREQUENCY_IN_SECONDS = 10;
@@ -31,9 +32,9 @@ namespace HeartbeatModule
         // The follow variables can be updated with the moduleTwin and are updated through the 
         // OnDesiredPropertiesUpdate method
         static uint backoffExp = 1; // used for exponential backoff
-		static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
-		static string moduleId = Environment.GetEnvironmentVariable($"IOTEDGE_MODULEID");
-		static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);
+        static string deviceId = Environment.GetEnvironmentVariable($"IOTEDGE_DEVICEID");
+        static string moduleId = GetStringEnvVar($"IOTEDGE_MODULEID", MODULE_ID);
+        static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);
         static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", END_WINDOW_IN_SECONDS);
         static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", HEARTBEAT_FREQUENCY_IN_SECONDS);
         static TimeSpan defaultEndWindow = endWindow;
@@ -106,11 +107,21 @@ namespace HeartbeatModule
             var strValue = Environment.GetEnvironmentVariable(varName);
             double doubleValue;
             // If the parse fails, assign the default value
-            if (!Double.TryParse(strValue, out doubleValue))
+            if (!double.TryParse(strValue, out doubleValue))
             {
                 doubleValue = defaultValue;
             }
             return TimeSpan.FromSeconds(doubleValue);
+        }
+
+        public static string GetStringEnvVar(string varName, string defaultValue)
+        {
+            var strValue = Environment.GetEnvironmentVariable(varName);
+            if (string.IsNullOrEmpty(strValue) 
+                || strValue.Contains('<') || strValue.Contains('>') || strValue.Contains('$'))
+                return defaultValue;
+
+            return strValue;
         }
 
         /// <summary>

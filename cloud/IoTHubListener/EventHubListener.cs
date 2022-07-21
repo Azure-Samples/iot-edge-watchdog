@@ -32,7 +32,7 @@ namespace GWManagementFunctions
 		public static async Task Run(
 				[EventHubTrigger(
 					"messages/events",
-					Connection = "EventHubIngestConnectionString")]
+					Connection = "IoTHubEventHubEndpointConnectionString")]
 				EventData[] events,
 				[EventHub("dest", Connection="EventHubEgressConnectionString")]
 				IAsyncCollector<string> tsiEventHub,
