@@ -1,6 +1,43 @@
 {
     "version": "2.0.0",
     "tasks": [
+        {
+          "label": "build",
+          "command": "dotnet",
+          "type": "process",
+          "args": [
+              "build",
+              "${workspaceFolder}/modules/Heartbeat/Heartbeat.csproj",
+              "/property:GenerateFullPaths=true",
+              "/consoleloggerparameters:NoSummary"
+          ],
+          "problemMatcher": "$msCompile"
+      },
+      {
+          "label": "publish",
+          "command": "dotnet",
+          "type": "process",
+          "args": [
+              "publish",
+              "${workspaceFolder}/modules/Heartbeat/Heartbeat.csproj",
+              "/property:GenerateFullPaths=true",
+              "/consoleloggerparameters:NoSummary"
+          ],
+          "problemMatcher": "$msCompile"
+      },
+      {
+          "label": "watch",
+          "command": "dotnet",
+          "type": "process",
+          "args": [
+              "watch",
+              "run",
+              "${workspaceFolder}/modules/Heartbeat/Heartbeat.csproj",
+              "/property:GenerateFullPaths=true",
+              "/consoleloggerparameters:NoSummary"
+          ],
+          "problemMatcher": "$msCompile"
+      },      
       {
         "label": "build",
         "command": "dotnet build",
@@ -29,11 +66,12 @@
         "type": "func",
         "dependsOn": "build",
         "options": {
-          "cwd": "${workspaceFolder}/bin/Debug/netcoreapp2.1"
+          "cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.1"
         },
         "command": "host start",
         "isBackground": true,
         "problemMatcher": "$func-watch"
-      }
+      },
+      
     ]
   }

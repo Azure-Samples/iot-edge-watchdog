@@ -36,7 +36,7 @@ namespace HeartbeatModule
         static string moduleId = GetStringEnvVar($"IOTEDGE_MODULEID", MODULE_ID);
         static TimeSpan startWindow = GetTimeSpanEnvVar("START_WINDOW_IN_SECONDS", START_WINDOW_IN_SECONDS);
         static TimeSpan endWindow = GetTimeSpanEnvVar("END_WINDOW_IN_SECONDS", END_WINDOW_IN_SECONDS);
-        static TimeSpan hartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", HEARTBEAT_FREQUENCY_IN_SECONDS);
+        static TimeSpan heartbeatFrequency = GetTimeSpanEnvVar("HEARTBEAT_FREQUENCY_IN_SECONDS", HEARTBEAT_FREQUENCY_IN_SECONDS);
         static TimeSpan defaultEndWindow = endWindow;
         static LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
 
@@ -50,7 +50,7 @@ namespace HeartbeatModule
             //To enable the debug wait code, pass 'true' to Init here Init(true);
             ModuleClient ioTHubModuleClient = await Init();
             Log.Information("DeviceId: {deviceId}, ModuleId: {moduleId}, Start Window: {StartWindow}, End Window: {EndWindow}, Beat Frequency: {BeatFrequency}"
-                , deviceId, moduleId, startWindow, endWindow, hartbeatFrequency);
+                , deviceId, moduleId, startWindow, endWindow, heartbeatFrequency);
 
             var moduleTwin = await ioTHubModuleClient.GetTwinAsync();
 
@@ -88,7 +88,7 @@ namespace HeartbeatModule
                 Interlocked.CompareExchange(ref msgId, 0, System.Int64.MaxValue);
                 Interlocked.Increment(ref msgId);
 
-                if (hartbeatFrequency - endWindow > TimeSpan.Zero) await Task.Delay(hartbeatFrequency - endWindow);
+                if (heartbeatFrequency - endWindow > TimeSpan.Zero) await Task.Delay(heartbeatFrequency - endWindow);
             }
         }
 
@@ -254,7 +254,7 @@ namespace HeartbeatModule
                 if (desiredProperties.Contains("beatFrequency") && desiredProperties["beatFrequency"] != null)
                 {
                     var rawBeatFrequency = desiredProperties["beatFrequency"] as JValue;
-                    hartbeatFrequency = TimeSpan.FromSeconds(Convert.ToDouble(rawBeatFrequency.Value));
+                    heartbeatFrequency = TimeSpan.FromSeconds(Convert.ToDouble(rawBeatFrequency.Value));
                 }
                 if (desiredProperties.Contains("logEventLevel") && desiredProperties["logEventLevel"] != null)
                 {
