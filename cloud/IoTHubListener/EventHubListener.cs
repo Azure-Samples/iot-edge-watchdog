@@ -99,7 +99,7 @@ namespace GWManagementFunctions
 
 			if (exceptions.Count == 1)
 				throw exceptions.Single();
-		}
-
-	}
+    }
+    
+  }
 }
