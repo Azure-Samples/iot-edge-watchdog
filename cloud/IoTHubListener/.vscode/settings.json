@@ -5,3 +5,4 @@
     "azureFunctions.preDeployTask": "publish",
     "debug.internalConsoleOptions": "neverOpen"
   }
+  
