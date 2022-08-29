@@ -1,0 +1,6 @@
+{    
+    "azure-iot-edge.defaultPlatform": {
+        "platform": "amd64", // use "arm32v7" for RPI ARM32 modules
+        "alias": null
+    }
+}

@@ -19,7 +19,7 @@ RUN dotnet publish -c Release -o /app/out
 
 # Second stage - Production Image
 # Copy binaries to new image
-FROM mcr.microsoft.com/dotnet/runtime:6.0
+FROM mcr.microsoft.com/dotnet/runtime:6.0-bullseye-slim-arm32v7
 WORKDIR /app
 COPY --from=build-env /app/out ./
 

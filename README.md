@@ -141,18 +141,31 @@ other container registry
 
 7. Azure Storage Emulator (optional, Windows only)
 
- [AzureStorageEmulator](https://docs.microsoft.com/en-us/azure/storage/commonstorage-use-emulator)  provides a local environment that emulates the AzureBlob, Queue, and Table services for development purposes.  Use the link for thestandalone installer.
+ [AzureStorageEmulator](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator)  provides a local environment that emulates the AzureBlob, Queue, and Table services for development purposes.  Use the link for the stand-alone installer.
 
- Azure Blob Storage is required for the Azure Functions runtime for internalstate management.  The Azure Function in this sample also writes decompressedmessages to an Azure Storage account. 
+ [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview) is required for the Azure Functions runtime for internal state management.  The Azure Function in this sample also writes decompressed messages to an Azure Storage account. 
 
  When running this sample locally on **Windows**, the Azure Storage Emulator can be used instead of creating an Azure Storage account.  The emulator will not work with **WSL** or **Linux** and a real storage account will be needed.
 
 ### Azure IoT Edge Module (Simulated Edge Device)
 
-In the provided `env` file (remove the `.temp` extension) there are many configurable
+In the provided `.env` file (remove the `.temp` extension or make a copy named `.env`) there are many configurable
 variables.  At a minimum, you will need to fill in the container registry settings.
 If you are using `localhost` are your registry, then you can leave username and
 password blank.
+
+### Azure Container Registry
+
+If you are using Azure Container Registry to store your container image, you will need to create or use an existing container registry in Azure via the Azure Portal or using the following Azure Cli command:
+
+```bash
+    az acr create --resource-group <your resource group> --name watchdog --sku Basic --admin-enabled true
+```    
+To push images, log in to the Azure Container Registry instance using a Azure Cli on your local development machine. You will need to provide the username and password when prompted. You'll find these values in the Settings->Access Keys section of your Container registry.
+
+```bash
+    az acr login --name watchdog
+```
 
 This Watchdog module also has configurable variables set in the Dockerfile.
 The default value embedded in the code is in parantheses () below.
@@ -175,7 +188,7 @@ for details). The Azure Function requires an input Event Hub, such as IoT Hub's 
 output Event Hub to push data to. The output Event Hub can be mapped to TSI for persistence of watchdog messages. 
 
 An optional consumer group may be added to the output Event Hub where messages are consumed by a streaming
-analytics service, such as Azure Stream Analytics. The stream analytics service can provide alerts/alarms/notifications
+analytics service, such as [Azure Stream Analytics](https://docs.microsoft.com/en-us/azure/stream-analytics/stream-analytics-introduction). The stream analytics service can provide alerts/alarms/notifications
 over a tumbling window, for a specific IoT Hub Device ID, to alert when a device has not sent a ping within a set period.
 These empty tumbling window alerts can then allow the cloud-side solution to generate dashboard alerts, or adjust
 solution behavior, such as preventing device deployments if the network connect appears unstable.  
@@ -184,19 +197,19 @@ solution behavior, such as preventing device deployments if the network connect 
 ### Environment settings and use/development
 
 There are four settings to configure for the IoT HuB listener.  These are in the
-`local.settings.json.temp` file.  After changing the settings, remove the `.temp`
-extension.
+`local.settings.json.temp` file within the `cloud\IoTHubListener` directory.  After changing the settings, remove the `.temp`
+extension or save your local copy as `local.settings.json`.
 
-First set the IoT Hub Connection string, then the IoT Hub Event Hub Endpoint Connection String.  This second string is what triggers the IoT Hub Listener and
-where it pulls the message data from. The Event Hub Endpoint is where the processed data gets sent and which enables Azure Time Series Insight or another service 
-to access the processed message.  Finally, AzureWebJobsStorage is a required backing
+First set the [IoT Hub Connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-csharp-csharp-device-management-get-started), then the [IoT Hub Event Hub Endpoint Connection String](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin).  This second string is what triggers the IoT Hub Listener and
+where it pulls the message data from. The [Event Hub Endpoint](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create) is where the processed data gets sent and which enables Azure Time Series Insight or another service 
+to access the processed message.  Finally, [AzureWebJobsStorage](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string) is a required backing
 store for Azure Functions.  This can be a local Azure Storage Emulator with the
-setting `UseDevelopmentStorage=true`.
+setting `UseDevelopmentStorage=true`(https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator#connect-to-the-emulator-account-using-the-shortcut).
 
-`IoTHubEventHubEndpointConnectionString`
-`IoTHubAckConnectionString`
-`EventHubEgressConnectionString`
-`AzureWebJobsStorage`
+- `IoTHubEventHubEndpointConnectionString`: IoT Hub Connection String
+- `IoTHubAckConnectionString`: IoT Hub `service` connection string for cloud-to-device (C2D) acknowledgement messages
+- `EventHubEgressConnectionString`: Connection String for send event hub in a namespace
+- `AzureWebJobsStorage`: Connection String for Storage Account or Azure Storage Emulator
 
 ### HeartMessage
 
