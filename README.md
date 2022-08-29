@@ -207,7 +207,7 @@ store for Azure Functions.  This can be a local Azure Storage Emulator with the
 setting `UseDevelopmentStorage=true`(https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator#connect-to-the-emulator-account-using-the-shortcut).
 
 - `IoTHubEventHubEndpointConnectionString`: IoT Hub Connection String
-- `IoTHubAckConnectionString`: Event Hub-compatible endpoint
+- `IoTHubAckConnectionString`: IoT Hub `service` connection string for cloud-to-device (C2D) acknowledgement messages
 - `EventHubEgressConnectionString`: Connection String for send event hub in a namespace
 - `AzureWebJobsStorage`: Connection String for Storage Account or Azure Storage Emulator
 

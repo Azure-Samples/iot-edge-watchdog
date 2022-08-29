@@ -5,6 +5,7 @@
     "EventHubEgressConnectionString": "<intentionally blank>",
     "IoTHubEventHubEndpointConnectionString": "<intentionally blank>",
     "AzureWebJobsStorage": "<intentionally blank>",
+    "MessageExpirationTimeinMinutes": "<intentionally blank>",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   }
 }
