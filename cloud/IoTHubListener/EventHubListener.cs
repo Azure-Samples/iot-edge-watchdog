@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,7 @@ namespace GWManagementFunctions
 				ILogger logger)
 		{
 			var exceptions = new List<Exception>();
-
+			logger.LogInformation("Received {0} message event(s) from hub", events.Count());
 			foreach (EventData message in events)
 			{
 				try
@@ -98,7 +99,7 @@ namespace GWManagementFunctions
 
 			if (exceptions.Count == 1)
 				throw exceptions.Single();
-		}
-
-	}
+    }
+    
+  }
 }

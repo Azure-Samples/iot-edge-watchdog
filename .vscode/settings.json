@@ -1,8 +1,12 @@
 {
-    "azureFunctions.deploySubpath": "IoTHubListener/bin/Release/net6/publish",
+    "azureFunctions.deploySubpath": "IoTHubListener/bin/Release/netcoreapp3.1/publish",
     "azureFunctions.projectLanguage": "C#",
-    "azureFunctions.projectRuntime": "~2",
+    "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "publish",
-    "azureFunctions.projectSubpath": "cloud\\IoTHubListener"
+    "azureFunctions.projectSubpath": "cloud\\IoTHubListener",
+    "azure-iot-edge.defaultPlatform": {
+        "platform": "amd64",
+        "alias": null
+    }
 }

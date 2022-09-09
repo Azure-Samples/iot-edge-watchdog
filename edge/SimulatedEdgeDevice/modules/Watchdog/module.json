@@ -6,8 +6,9 @@
         "tag": {
             "version": "latest",
             "platforms": {
+                "arm32v7": "./Dockerfile.arm32v7",
                 "amd64": "./Dockerfile.amd64",
-                "amd64.debug": "./Dockerfile.amd64.debug"
+                "amd64.debug": "./Dockerfile.amd64.debug"                
             }
         },
         "buildOptions": [],
